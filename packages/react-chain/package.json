@@ -1,0 +1,33 @@
+{
+  "name": "react-chain",
+  "version": "0.1.0",
+  "description": "A chain of pluggable logic for your React rendering pipline.",
+  "repository": "git@github.com:aranja/react-chain.git",
+  "author": "Aranja",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "private": true,
+  "keywords": [],
+  "scripts": {
+    "prepublish": "npm run typescript",
+    "watch": "npm run typescript -- --watch",
+    "typescript": "../../node_modules/.bin/tsc",
+    "test": "../../node_modules/.bin/jest"
+  },
+  "peerDependencies": {
+    "react": "^15.0.0",
+    "react-dom": "^15.0.0"
+  },
+  "jest": {
+    "transform": {
+      ".(ts|tsx)": "<rootDir>/../../node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json"
+    ]
+  }
+}

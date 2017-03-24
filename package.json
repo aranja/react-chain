@@ -1,0 +1,38 @@
+{
+  "name": "react-chain",
+  "version": "0.1.0",
+  "description": "A chain of pluggable logic for your React rendering pipline.",
+  "repository": "git@github.com:aranja/react-chain.git",
+  "author": "Aranja",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "react": "^15.0.0",
+    "react-dom": "^15.0.0"
+  },
+  "devDependencies": {
+    "@types/enzyme": "^2.7.6",
+    "@types/jest": "^19.2.2",
+    "@types/react": "^15.0.0",
+    "@types/react-dom": "^0.14.23",
+    "babel-jest": "^19.0.0",
+    "babel-preset-es2015": "^6.24.0",
+    "babel-preset-react": "^6.23.0",
+    "enzyme": "^2.7.1",
+    "jest": "^19.0.2",
+    "lerna": "2.0.0-beta.38",
+    "react-addons-test-utils": "^15.4.2",
+    "react-test-renderer": "^15.4.2",
+    "ts-jest": "^19.0.3",
+    "tslint": "^4.5.1",
+    "typescript": "^2.2.1"
+  },
+  "scripts": {
+    "bootstrap": "lerna bootstrap --hoist",
+    "lerna": "lerna",
+    "lint": "./scripts/lint.sh",
+    "postinstall": "npm run bootstrap",
+    "watch": "lerna run watch --stream --no-sort",
+    "test": "lerna run test"
+  }
+}

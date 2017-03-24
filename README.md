@@ -1,4 +1,4 @@
-<img src="react chain logo.png" width="50%">
+<img src="images/react chain logo.png" width="50%">
 
 A chain of pluggable logic for your React rendering pipline.
 

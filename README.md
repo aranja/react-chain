@@ -1,6 +1,6 @@
-<img src="images/react chain logo.png" width="50%">
+# <img src="images/react chain logo.png" width="50%">
 
-A chain of pluggable logic for your React rendering pipline.
+ReactChain simplifies the process of bootstraping browser, and server rendered React applications with a shared middleware chain. 
 
 ## Install
 

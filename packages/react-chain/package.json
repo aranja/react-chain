@@ -6,8 +6,6 @@
   "author": "Aranja",
   "main": "lib/index.js",
   "license": "MIT",
-  "private": true,
-  "keywords": [],
   "scripts": {
     "prepublish": "npm run typescript",
     "watch": "npm run typescript -- --watch",

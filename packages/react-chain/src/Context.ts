@@ -1,6 +1,6 @@
 export type Context<T> = {
-  htmlProps : any
-  refresh? : (onComplete : () => void) =>
+  htmlProps: any
+  refresh?: (onComplete: () => void) =>
     Promise<any>
 } & T
 

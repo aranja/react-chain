@@ -1,0 +1,37 @@
+{
+  "name": "react-chain-history",
+  "version": "0.1.0",
+  "description": "A react-chain middleware for history",
+  "main": "index.js",
+  "repository": {
+    "url": "aranja/react-chain",
+    "type": "git"
+  },
+  "author": "Aranja",
+  "license": "MIT",
+  "scripts": {
+    "prepublish": "npm run typescript",
+    "watch": "npm run typescript -- --watch",
+    "typescript": "../../node_modules/.bin/tsc",
+    "test": "../../node_modules/.bin/jest"
+  },
+  "devDependencies": {
+    "@types/history": "^4.5.0"
+  },
+  "jest": {
+    "transform": {
+      ".(ts|tsx)": "<rootDir>/../../node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json"
+    ]
+  },
+  "dependencies": {
+    "history": "^4.6.1",
+    "react": "^15.4.2"
+  }
+}

@@ -4,4 +4,4 @@ machine:
 
 test:
   override:
-    - npm test-ci --silent
+    - npm run test-ci --silent

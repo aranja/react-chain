@@ -29,6 +29,7 @@
   },
   "scripts": {
     "bootstrap": "lerna bootstrap --hoist",
+    "clean": "lerna clean",
     "lerna": "lerna",
     "lint": "./scripts/lint.sh",
     "postinstall": "npm run bootstrap",

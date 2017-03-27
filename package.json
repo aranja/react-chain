@@ -40,6 +40,7 @@
   "jest": {
     "collectCoverageFrom": [
       "**/packages/react-chain*/**/*",
+      "!**/lib/**",
       "!**/__mocks__/**",
       "!**/__tests__/**"
     ],
@@ -49,9 +50,10 @@
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
+    "testResultsProcessor": "<rootDir>/node_modules/ts-jest/coverageprocessor.js",
     "testPathIgnorePatterns": [
       "/node_modules/",
-      "/packages/.*/build",
+      "/packages/*/lib/",
       "\\.snap$"
     ],
     "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",

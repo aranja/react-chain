@@ -1,1 +1,4 @@
-export { default as createReactChain } from './ReactChain'
+import createReactChain from './ReactChain'
+
+export default createReactChain
+export * from './render'

@@ -34,6 +34,33 @@
     "lint": "./scripts/lint.sh",
     "postinstall": "npm run bootstrap",
     "watch": "lerna run watch --stream --no-sort",
-    "test": "lerna run test"
+    "test": "jest"
+  },
+  "jest": {
+    "globals": {
+      "__TS_CONFIG__": "<rootDir>/packages/react-chain/tsconfig.json"
+    },
+    "collectCoverageFrom": [
+      "**/packages/react-chain*/**/*",
+      "!**/__mocks__/**",
+      "!**/__tests__/**"
+    ],
+    "coverageReporters": [
+      "json"
+    ],
+    "transform": {
+      ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/packages/.*/build",
+      "\\.snap$"
+    ],
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ]
   }
 }

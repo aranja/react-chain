@@ -2,7 +2,7 @@
   "name": "react-chain-history",
   "version": "0.1.1",
   "description": "A react-chain middleware for history",
-  "main": "index.js",
+  "main": "lib/index.js",
   "repository": {
     "url": "aranja/react-chain",
     "type": "git"

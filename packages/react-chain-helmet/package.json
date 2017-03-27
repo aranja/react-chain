@@ -2,7 +2,7 @@
   "name": "react-chain-helmet",
   "version": "0.1.1",
   "description": "A react-chain middleware for react-helmet",
-  "main": "index.js",
+  "main": "lib/index.js",
   "repository": {
     "url": "aranja/react-chain",
     "type": "git"

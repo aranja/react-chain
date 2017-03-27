@@ -29,6 +29,7 @@
   },
   "scripts": {
     "bootstrap": "lerna bootstrap --hoist",
+    "build": "lerna run prepublish",
     "clean": "lerna clean",
     "lerna": "lerna",
     "lint": "./scripts/lint.sh",
@@ -37,9 +38,6 @@
     "test": "jest"
   },
   "jest": {
-    "globals": {
-      "__TS_CONFIG__": "<rootDir>/packages/react-chain/tsconfig.json"
-    },
     "collectCoverageFrom": [
       "**/packages/react-chain*/**/*",
       "!**/__mocks__/**",

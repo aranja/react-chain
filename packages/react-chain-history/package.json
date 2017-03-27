@@ -10,7 +10,8 @@
   "author": "Aranja",
   "license": "MIT",
   "scripts": {
-    "prepublish": "npm run typescript",
+    "clean": "rm -rf lib",
+    "prepublish": "npm run clean && npm run typescript",
     "watch": "npm run typescript -- --watch",
     "typescript": "../../node_modules/.bin/tsc",
     "test": "../../node_modules/.bin/jest"

@@ -1,6 +1,5 @@
 import * as React from 'react'
-import { Context } from './context'
-import { ReactElement } from 'react'
+import { Context } from './Context'
 
 export type Props = {
   context: Context<any>,
@@ -9,7 +8,7 @@ export type Props = {
 }
 
 export type RenderChildren =
-  null | (() => Promise<ReactElement<any>>)
+  null | (() => Promise<React.ReactElement<any>>)
 
 export class ReactChainBase extends React.Component<Props, any> {
   static childContextTypes = {

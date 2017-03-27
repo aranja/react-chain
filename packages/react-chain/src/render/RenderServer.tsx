@@ -1,4 +1,4 @@
-import createContext from '../context'
+import createContext from '../Context'
 import { ComponentClass, createElement } from 'react'
 import { renderToStaticMarkup, renderToString } from 'react-dom/server'
 import { ReactChain } from '../ReactChain'

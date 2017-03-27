@@ -1,4 +1,4 @@
-import createContext, { Context } from './context'
+import createContext, { Context } from './Context'
 import createBase from './ReactChainBase'
 import { ReactElement } from 'react'
 

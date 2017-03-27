@@ -1,5 +1,5 @@
 import * as ReactDOM from 'react-dom'
-import createContext from '../context'
+import createContext from '../Context'
 import { ReactChain } from '../ReactChain'
 
 function startClient(chain: ReactChain, domNode: Element) {

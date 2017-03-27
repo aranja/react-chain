@@ -1,6 +1,6 @@
 {
   "name": "react-chain-helmet",
-  "version": "0.1.2",
+  "version": "0.2.2",
   "description": "A react-chain middleware for react-helmet",
   "main": "lib/index.js",
   "repository": {

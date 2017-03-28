@@ -1,10 +1,10 @@
 import * as Helmet from 'react-helmet'
 
-export interface Config {}
-
-export default (config: Config = {}) => ({
-  wrapServerRender(render: Function, context: any) {
+const helmet = () => (session: any) => {
+  session.wrapServer(render => {
     render()
-    context.htmlProps.helmet = Helmet.rewind()
-  }
-})
+    session.props.helmet = Helmet.rewind()
+  })
+}
+
+export default helmet

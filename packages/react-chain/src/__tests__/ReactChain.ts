@@ -1,29 +1,32 @@
-import createReactChain from '../ReactChain'
+import createReactChain, { Session } from '../ReactChain'
 import { createElement } from 'react'
 import { shallow } from 'enzyme'
 import createContext from '../Context'
 import { ReactChainBase } from '../ReactChainBase'
 
 describe('ReactChain', () => {
-  describe('.chain()', () => {
+  describe.only('.chain()', () => {
     test('is callable', () => {
       const app = createReactChain()
       expect(typeof app.chain).toBe('function')
     })
 
-    test('is chainable', () => {
+    it('should throw if a middleware isn\'t a function', () => {
       const app = createReactChain()
-      expect(app.chain({})).toBe(app)
+      expect(() => app.chain()).toThrowErrorMatchingSnapshot()
     })
 
-    test('createElement gets wrapped', async () => {
+    it('should be chainable', () => {
+      const app = createReactChain()
+      expect(app.chain(() => {})).toBe(app)
+    })
+
+    it('should wrap with ReactChainBase', async () => {
       const app = createReactChain()
 
-      app.chain({
-        async createElement() {
-          return createElement('div', {}, 'dummy element')
-        },
-      })
+      app.chain(() => () =>
+        createElement('div', {}, 'dummy element')
+      )
 
       const element = await app.getElement()
       const wrapper = shallow(element)
@@ -33,48 +36,36 @@ describe('ReactChain', () => {
       expect(wrapper.html()).toBe('<div>dummy element</div>')
     })
 
-    test('wraps same ReactChainBase component each time', async () => {
+    it('should wrap same ReactChainBase component each time', async () => {
       const app = createReactChain()
       const element1 = await app.getElement()
       const element2 = await app.getElement()
       expect(element1.type).toEqual(element2.type)
     })
 
-    test('createElement can modify the context', async () => {
+    it('should have mutable props', async () => {
       const app = createReactChain()
 
-      app.chain({
-        async createElement(renderChildren, context) {
-          context.htmlProps.someEdit = 'someEdit'
-          return await renderChildren()
-        }
+      app.chain(session => {
+        session.props.someEdit = 'someEdit'
       })
 
-      app.chain({
-        async createElement(renderChildren, context) {
-          context.htmlProps.someEdit += ' anotherEdit'
-          return await renderChildren()
-        }
+      app.chain(session => {
+        session.props.someEdit += ' anotherEdit'
       })
 
-      const context = createContext()
-      await app.getElement(context)
+      const session = new Session()
+      await app.getElement(session)
 
-      expect(context).toEqual({
-        htmlProps: {
-          someEdit: 'someEdit anotherEdit',
-        },
-      })
+      expect(session.props).toHaveProperty('someEdit', 'someEdit anotherEdit')
     })
 
-    test('renderChildren should always be callable', async () => {
+    it('should always be possible to await next, even at the end of the chain', async () => {
       const app = createReactChain()
 
-      app.chain({
-        async createElement(renderChildren) {
-          const element = await renderChildren()
-          return createElement('div', { className: 'wrap' }, element)
-        },
+      app.chain(session => async next => {
+        const element = await next()
+        return createElement('div', { className: 'wrap' }, element)
       })
 
       const element = await app.getElement()
@@ -83,7 +74,7 @@ describe('ReactChain', () => {
       expect(wrapper.html()).toBe('<div class="wrap"></div>')
     })
 
-    test('middleware is not required', async () => {
+    it('should be possible to call getElement without a single middleware', async () => {
       const app = createReactChain()
       const element = await app.getElement()
       expect(element.props).toHaveProperty('context', {

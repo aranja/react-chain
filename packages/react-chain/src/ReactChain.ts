@@ -2,57 +2,84 @@ import createContext, { Context } from './Context'
 import createBase from './ReactChainBase'
 import { ReactElement } from 'react'
 
+export type RenderTarget =
+  'browser' |
+  'server'
+
 export type WrapElement =
-  (renderChildren: () => Promise<null | ReactElement<any>>, context: Context<any>) =>
+  (renderChildren: () => Promise<null | ReactElement<any>>) =>
     Promise<ReactElement<any>>
 
 export type WrapRender =
-  (render: Function, context: Context<any>) =>
+  (render: Function) =>
     void
 
-export interface Middleware {
-  createElement?: WrapElement
-  wrapClientRender?: WrapRender
-  wrapServerRender?: WrapRender
+export interface SessionAPI {
+  on: (target: 'server' | 'browser', render: Function) => void
+  refresh?: () => void
+  req?: Request
+  res?: Response
+  props: any
+  window: any
+}
+
+export type Middleware =
+  (session: SessionAPI) =>
+    (void | WrapElement)
+
+export class Session {
+  private browserChain: Array<Function> = []
+  private serverChain: Array<Function> = []
+
+  public props = {}
+  public window = {}
+
+  on(target: RenderTarget, render: Function) {
+    switch (target) {
+      case 'browser':
+        this.browserChain.push(render)
+        break
+      case 'server':
+        this.serverChain.push(render)
+        break
+      default:
+        throw new Error()
+    }
+  }
+
+  async renderBrowser() {
+
+  }
+
+  render() {}
 }
 
 export class ReactChain {
+  protected middlewareChain: Array<Middleware> = []
   protected elementChain: Array<WrapElement> = []
-  protected clientChain: Array<WrapRender> = []
-  protected serverChain: Array<WrapRender> = []
 
-  chain(middleware: WrapElement | Middleware) {
-    if (typeof middleware === 'function') {
-      middleware = {
-        createElement: middleware,
-      }
+  chain(middleware: Middleware) {
+    if (typeof middleware !== 'function') {
+      throw new Error('A react-chain middleware should be a function')
     }
 
-    if (middleware.createElement) {
-      if (typeof middleware.createElement !== 'function') {
-        throw new Error('[chain()] createElement should be a function.')
-      }
-      this.elementChain.push(middleware.createElement)
-    }
-
-    if (middleware.wrapClientRender) {
-      if (typeof middleware.wrapClientRender !== 'function') {
-        throw new Error('[chain()] wrapClientRender should be a function.')
-      }
-      this.clientChain.push(middleware.wrapClientRender)
-    }
-
-    if (middleware.wrapServerRender) {
-      if (typeof middleware.wrapServerRender !== 'function') {
-        throw new Error('[chain()] wrapServerRender should be a function.')
-      }
-      this.serverChain.push(middleware.wrapServerRender)
-    }
+    this.middlewareChain.push(middleware)
 
     return this
   }
 
-  async getElement(context = createContext({})): Promise<ReactElement<any>> {
+  async getElement(session = new Session()) {
+    this.middlewareChain.forEach(middleware => {
+      const createElement = middleware(session)
+      if (typeof createElement === 'function') {
+        this.elementChain.push(createElement)
+      }
+    })
+
+    return this.unfoldElementChain(session)
+  }
+
+  private async unfoldElementChain(session: Session): Promise<ReactElement<any>> {
     const elementChain = [createBase, ...this.elementChain]
     let index = 0
 
@@ -61,7 +88,7 @@ export class ReactChain {
       const renderChildren = elementChain[index]
         ? await next
         : () => Promise.resolve(null)
-      return createElement(renderChildren, context)
+      return createElement(renderChildren, session)
     }
 
     return await next()
@@ -69,7 +96,7 @@ export class ReactChain {
 
   renderClient(context: Context<any>, onRender: Function) {
     return new Promise(resolve => {
-      this.renderWrapper(this.clientChain, context, () => {
+      this.renderWrapper(this.browserChain, () => {
         onRender()
         resolve()
       })
@@ -78,7 +105,7 @@ export class ReactChain {
 
   renderServer(context: Context<any>, onRender: Function) {
     let body: string = ''
-    this.renderWrapper(this.serverChain, context, () => {
+    this.renderWrapper(this.serverChain, () => {
       body = onRender()
     })
     return body
@@ -86,7 +113,6 @@ export class ReactChain {
 
   private renderWrapper(
     wrappers: Array<WrapRender>,
-    context: Context<any>,
     onComplete: () => void
   ) {
     let index = 0

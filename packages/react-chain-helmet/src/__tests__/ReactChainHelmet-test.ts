@@ -1,4 +1,4 @@
-import chainHelmet from '../index'
+import chainHelmet from '../ReactChainHelmet'
 
 jest.mock('react-helmet')
 

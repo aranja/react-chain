@@ -1,4 +1,4 @@
-import chainHistory from '../index'
+import chainHistory from '../ReactChainHistory'
 import HistoryProvider from '../HistoryProvider'
 import * as React from 'react'
 import { shallow } from 'enzyme'

@@ -41,13 +41,12 @@
   },
   "jest": {
     "collectCoverageFrom": [
-      "**/packages/react-chain*/**/*",
+      "**/packages/react-chain*/src/**/*",
       "!**/lib/**",
       "!**/__mocks__/**",
       "!**/__tests__/**"
     ],
     "coverageReporters": [
-      "json"
     ],
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
@@ -62,7 +61,8 @@
     "moduleFileExtensions": [
       "ts",
       "tsx",
-      "js"
+      "js",
+      "json"
     ]
   }
 }

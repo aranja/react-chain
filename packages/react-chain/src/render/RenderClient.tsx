@@ -9,11 +9,8 @@ function startClient(chain: ReactChain, domNode: Element) {
     const element = await chain.getElement(session)
 
     return await chain.renderBrowser(session, () => {
-      if (onComplete) {
-        render(element, domNode, onComplete)
-      } else {
-        render(element, domNode)
-      }
+      // Note: Typecasting to avoid weird, incorrect type checks.
+      render(element as any, domNode as any, onComplete as any)
     })
   }
 

@@ -1,9 +1,9 @@
 import * as React from 'react'
-import { Context } from './Context'
+import Session from './Session'
 
 export type Props = {
-  context: Context<any>,
-  nextContext?: Context<any>,
+  context: Session,
+  nextContext?: Session,
   children?: any,
 }
 
@@ -24,7 +24,7 @@ export class ReactChainBase extends React.Component<Props, any> {
   }
 }
 
-async function createBase(renderChildren: RenderChildren, context: Context<any>) {
+async function createBase(renderChildren: RenderChildren, context: Session) {
   const element = renderChildren && await renderChildren()
   return React.createElement(ReactChainBase, { context }, element)
 }

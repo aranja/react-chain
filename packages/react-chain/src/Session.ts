@@ -1,4 +1,4 @@
-import { WrapRender, RenderTarget } from "./ReactChain";
+import { WrapRender, RenderTarget } from './ReactChain'
 
 class Session {
   private browserChain: WrapRender[] = []
@@ -20,7 +20,10 @@ class Session {
         this.serverChain.push(render)
         break
       default:
-        throw new Error()
+        throw new Error(
+          `session.on: '${target}' is an invalid render target, ` +
+          `it needs to be set to either 'browser' or 'server'.`
+        )
     }
   }
 
@@ -34,7 +37,6 @@ class Session {
 
     function render() {
       const wrap = wrappers[index++]
-      let didCallNext = false
       const next = wrappers[index] == null ? onComplete : render
       wrap(next)
     }

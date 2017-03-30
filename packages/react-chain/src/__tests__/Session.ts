@@ -1,9 +1,18 @@
 import Session from '../Session'
 
 describe('Session', () => {
+  it('should throw for unknown targets', async () => {
+    const session = new Session()
+
+
+    expect(() => {
+      session.on('unknown')
+    }).toThrowErrorMatchingSnapshot()
+  })
+
   it('unfolds correct middleware chain', async () => {
-    const browserCallOrder = []
-    const serverCallOrder = []
+    const browserCallOrder: string[] = []
+    const serverCallOrder: string[] = []
     const session = new Session()
 
     session.on('browser', render => {
@@ -56,11 +65,12 @@ describe('Session', () => {
     ])
   })
 
-  it('should throw if fails to call render', async () => {
+  it.skip('should throw if fails to call render', async () => {
     const session = new Session()
 
     session.on('browser', render => {
       session.props.someEdit = 'someEdit'
+      render()
     })
 
     expect(() => {

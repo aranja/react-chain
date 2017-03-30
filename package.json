@@ -55,6 +55,7 @@
     "testPathIgnorePatterns": [
       "/node_modules/",
       "/packages/*/lib/",
+      "\\.d\\.tsx?$",
       "\\.snap$"
     ],
     "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",

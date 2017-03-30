@@ -1,7 +1,7 @@
 import renderClient from '../RenderClient'
 import createReactChain from '../../ReactChain'
 import { ReactChain } from '../../ReactChain'
-import { createElement } from 'react'
+import * as React from 'react'
 
 describe('renderClient()', () => {
   let appRoot: Element
@@ -24,7 +24,7 @@ describe('renderClient()', () => {
   })
 
   it('should await getElement before rendering', async () => {
-    const callOrder = []
+    const callOrder: string[] = []
     app.getElement = jest.fn(() => callOrder.push('GET_ELEMENT'))
     app.renderBrowser = jest.fn(() => callOrder.push('RENDER_BROWSER'))
     await renderClient(app, appRoot)
@@ -45,28 +45,22 @@ describe('renderClient()', () => {
   })
 
   it('should render a React component to the appRoot', async () => {
-    app.chain((session) => () => createElement('div', {}, 'React Element'))
+    app.chain((session) => () => <div>React Element</div>)
     await renderClient(app, appRoot)
     expect(appRoot.innerHTML).toMatchSnapshot()
   })
 
-  it.only('should rerender when refresh is called', done => {
-    let renderCount = 0
-
+  it('should rerender when refresh is called', done => {
     app.chain(session => {
-      session.on('browser', render => {
-        console.log('here');
-
-        expect(renderCount).toEqual(1)
-        render()
-        expect(renderCount).toEqual(1)
-        done()
-      })
+      if (session.refresh) {
+        setTimeout(() => {
+          session.refresh(() => {
+            done()
+          })
+        })
+      }
 
       return async next => {
-        console.log('render');
-
-        renderCount += 1
         return await next()
       }
     })

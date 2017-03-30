@@ -35,13 +35,25 @@ class Session {
       return
     }
 
-    function render() {
-      const wrap = wrappers[index++]
-      const next = wrappers[index] == null ? onComplete : render
-      wrap(next)
+    let didCallRenderers = false
+    const wrappedComplete = () => {
+      didCallRenderers = true
+      return onComplete.apply(null, arguments)
     }
 
-    render()
+    function next() {
+      const wrap = wrappers[index++]
+      const callback = wrappers[index] == null ? wrappedComplete : next
+      wrap(callback)
+    }
+
+    next()
+
+    if (!didCallRenderers) {
+      throw new Error(
+        `session.on: some render wrapper didn't call 'render()'.`
+      )
+    }
   }
 
   render(target: RenderTarget, onComplete: Function) {

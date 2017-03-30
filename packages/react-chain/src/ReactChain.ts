@@ -7,7 +7,7 @@ export type RenderTarget =
   'server'
 
 export type WrapElement =
-  (renderChildren: () => Promise<null | ReactElement<any>>) =>
+  (renderChildren: () => Promise<null | ReactElement<any>>, context: any) =>
     ReactElement<any> | Promise<ReactElement<any>>
 
 export type WrapRender =
@@ -20,7 +20,7 @@ export type Middleware =
 
 export class ReactChain {
   protected middlewareChain: Array<Middleware> = []
-  protected elementChain: Array<typeof createBase | WrapElement> = []
+  protected elementChain: Array<WrapElement> = []
 
   private firstRender = true
 
@@ -35,7 +35,7 @@ export class ReactChain {
     return this
   }
 
-  async getElement(session = new Session()) {
+  async getElement(session = new Session()): Promise<ReactElement<any>> {
     if (this.firstRender) {
       this.elementChain = [createBase]
 

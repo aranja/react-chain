@@ -52,13 +52,13 @@ describe('renderClient()', () => {
 
   it('should rerender when refresh is called', done => {
     app.chain(session => {
-      if (session.refresh) {
-        setTimeout(() => {
+      setTimeout(() => {
+        if (session.refresh) {
           session.refresh(() => {
             done()
           })
-        })
-      }
+        }
+      })
 
       return async next => {
         return await next()

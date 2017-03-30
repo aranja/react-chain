@@ -1,18 +1,28 @@
-import * as ReactDOM from 'react-dom'
-import createContext from '../Context'
+import { render } from 'react-dom'
+import Session from '../Session'
 import { ReactChain } from '../ReactChain'
 
 function startClient(chain: ReactChain, domNode: Element) {
-  const context = createContext()
+  const session = new Session()
 
-  async function refresh(onComplete = () => {}) {
-    const element = await chain.getElement(context)
-    return await chain.renderClient(context, () => {
-      ReactDOM.render(element, domNode, onComplete)
+  console.log('startClient');
+
+
+  async function refresh(onComplete?: Function) {
+    console.log('refresh');
+
+    const element = await chain.getElement(session)
+    return await chain.renderBrowser(session, () => {
+      console.log('on render');
+      if (onComplete) {
+        render(element, domNode, onComplete)
+      } else {
+        render(element, domNode)
+      }
     })
   }
 
-  context.refresh = refresh
+  session.refresh = refresh
   return refresh()
 }
 

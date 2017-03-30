@@ -1,6 +1,6 @@
-import createContext, { Context } from './Context'
 import createBase from './ReactChainBase'
 import { ReactElement } from 'react'
+import Session from './Session'
 
 export type RenderTarget =
   'browser' |
@@ -24,39 +24,12 @@ export interface SessionAPI {
 }
 
 export type Middleware =
-  (session: SessionAPI) =>
+  (session: Session) =>
     (void | WrapElement)
-
-export class Session {
-  private browserChain: Array<Function> = []
-  private serverChain: Array<Function> = []
-
-  public props = {}
-  public window = {}
-
-  on(target: RenderTarget, render: Function) {
-    switch (target) {
-      case 'browser':
-        this.browserChain.push(render)
-        break
-      case 'server':
-        this.serverChain.push(render)
-        break
-      default:
-        throw new Error()
-    }
-  }
-
-  async renderBrowser() {
-
-  }
-
-  render() {}
-}
 
 export class ReactChain {
   protected middlewareChain: Array<Middleware> = []
-  protected elementChain: Array<WrapElement> = []
+  protected elementChain: Array<WrapElement>
 
   chain(middleware: Middleware) {
     if (typeof middleware !== 'function') {
@@ -69,12 +42,17 @@ export class ReactChain {
   }
 
   async getElement(session = new Session()) {
-    this.middlewareChain.forEach(middleware => {
-      const createElement = middleware(session)
-      if (typeof createElement === 'function') {
-        this.elementChain.push(createElement)
-      }
-    })
+    if (!this.elementChain) {
+      this.elementChain = []
+
+      this.middlewareChain.forEach(middleware => {
+        const createElement = middleware(session)
+
+        if (typeof createElement === 'function') {
+          this.elementChain.push(createElement)
+        }
+      })
+    }
 
     return this.unfoldElementChain(session)
   }
@@ -94,40 +72,16 @@ export class ReactChain {
     return await next()
   }
 
-  renderClient(context: Context<any>, onRender: Function) {
-    return new Promise(resolve => {
-      this.renderWrapper(this.browserChain, () => {
-        onRender()
-        resolve()
-      })
-    })
+  renderBrowser(session: Session, onRender: Function) {
+    session.render('browser', onRender)
   }
 
-  renderServer(context: Context<any>, onRender: Function) {
+  renderServer(session: Session, onRender: Function) {
     let body: string = ''
-    this.renderWrapper(this.serverChain, () => {
+    session.render('server', () => {
       body = onRender()
     })
     return body
-  }
-
-  private renderWrapper(
-    wrappers: Array<WrapRender>,
-    onComplete: () => void
-  ) {
-    let index = 0
-
-    if (wrappers.length === 0) {
-      onComplete()
-      return
-    }
-
-    function render() {
-      const wrap = wrappers[index++]
-      wrap(wrappers[index] == null ? onComplete : render, context)
-    }
-
-    render()
   }
 }
 

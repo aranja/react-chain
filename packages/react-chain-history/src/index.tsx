@@ -1,51 +1,30 @@
 import * as React from 'react'
-import { createBrowserHistory, createMemoryHistory } from 'history'
+import createBrowserHistory from 'history/createBrowserHistory'
+import createMemoryHistory from 'history/createMemoryHistory'
+import HistoryProvider from './HistoryProvider'
 
-const ContextType = {
-  history: React.PropTypes.object.isRequired,
-}
+const history = () => (session: any) => {
+  let history: any
 
-export class HistoryProvider extends React.Component<any, any> {
-  static propTypes = {
-    context: React.PropTypes.shape(ContextType).isRequired,
-    children: React.PropTypes.element.isRequired,
+  if (session.req) {
+    history = createMemoryHistory()
+  } else {
+    history = createBrowserHistory()
+    history.listen(() => {
+      session.refresh()
+    })
   }
 
-  static childContextTypes = ContextType
+  session.history = history
 
-  getChildContext() {
-    return this.props.context
-  }
-
-  render() {
-    return React.Children.only(this.props.children)
-  }
-}
-
-const history = () => ({
-  async createElement(renderChildren: Function, context: any) {
-    let { history } = context
-
-    if (!history) {
-      if (context.request) {
-        history = createMemoryHistory(context.request.url)
-      } else {
-        history = createBrowserHistory()
-        history.listen(() => {
-          context.refresh()
-        })
-      }
-
-      context.history = history
-    }
-
-    const children = await renderChildren()
+  return async (next: () => any) => {
+    const children = await next()
     return (
-      <HistoryProvider context={{ history }}>
+      <HistoryProvider history={history}>
         {children}
       </HistoryProvider>
     )
   }
-})
+}
 
 export default history

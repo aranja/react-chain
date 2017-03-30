@@ -1,12 +1,19 @@
 import Session from '../Session'
 
 describe('Session', () => {
+  it('should throw if render isn\'t a function', () => {
+    const session = new Session()
+
+    expect(() => {
+      session.on('browser')
+    }).toThrowErrorMatchingSnapshot()
+  })
+
   it('should throw for unknown targets', () => {
     const session = new Session()
 
-
     expect(() => {
-      session.on('unknown')
+      session.on()
     }).toThrowErrorMatchingSnapshot()
   })
 

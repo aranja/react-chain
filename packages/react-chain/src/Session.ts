@@ -11,14 +11,20 @@ class Session {
   public res?: Response
   public refresh?: Function
 
-  on(target: RenderTarget, render: WrapRender) {
+  on(target?: RenderTarget, render?: WrapRender) {
+    const chain = this.getChainForTarget(target)
+    if (typeof render !== 'function') {
+      throw new Error('session.on: render should be a function.')
+    }
+    chain.push(render)
+  }
+
+  private getChainForTarget(target?: RenderTarget) {
     switch (target) {
       case 'browser':
-        this.browserChain.push(render)
-        break
+        return this.browserChain
       case 'server':
-        this.serverChain.push(render)
-        break
+        return this.serverChain
       default:
         throw new Error(
           `session.on: '${target}' is an invalid render target, ` +

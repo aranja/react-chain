@@ -41,12 +41,10 @@
   },
   "jest": {
     "collectCoverageFrom": [
-      "**/packages/react-chain*/src/**/*",
-      "!**/lib/**",
-      "!**/__mocks__/**",
-      "!**/__tests__/**"
+      "**/packages/*/src/**/*"
     ],
     "coverageReporters": [
+      "json"
     ],
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
@@ -54,8 +52,7 @@
     "testResultsProcessor": "<rootDir>/node_modules/ts-jest/coverageprocessor.js",
     "testPathIgnorePatterns": [
       "/node_modules/",
-      "/packages/*/lib/",
-      "\\.d\\.tsx?$",
+      "lib",
       "\\.snap$"
     ],
     "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",

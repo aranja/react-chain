@@ -1,7 +1,7 @@
 import * as Helmet from 'react-helmet'
 
 const helmet = () => (session: any) => {
-  session.wrapServer((render: Function) => {
+  session.on('server', (render: Function) => {
     render()
     session.props.helmet = Helmet.rewind()
   })

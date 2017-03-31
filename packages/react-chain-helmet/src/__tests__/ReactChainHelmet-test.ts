@@ -13,19 +13,17 @@ describe('react-chain-helmet', () => {
   })
 
   it('should call render and modify the context on server render', done => {
-    const renderSpy = jest.fn()
-    const wrapServerSpy = jest.fn((server) => {
-      server(renderSpy)
+    const next = jest.fn()
+    const on = jest.fn((target, render) => {
+      render(next)
       expect(sessionMock.props).toHaveProperty('helmet', true)
-      expect(renderSpy).toHaveBeenCalled()
+      expect(next).toHaveBeenCalled()
       done()
     })
     const sessionMock = {
-      wrapServer: wrapServerSpy,
+      on,
       props: {},
     }
-
     chainHelmet()(sessionMock)
-    expect(wrapServerSpy).toHaveBeenCalled()
   })
 })

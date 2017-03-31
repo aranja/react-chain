@@ -1,6 +1,7 @@
 import createBase from './ReactChainBase'
 import { ReactElement } from 'react'
 import Session from './Session'
+import { getChainForTarget, renderRecursively, render } from './SessionUtils'
 
 export type RenderTarget =
   'browser' |
@@ -20,9 +21,6 @@ export type Middleware =
 
 export class ReactChain {
   protected middlewareChain: Array<Middleware> = []
-  protected elementChain: Array<WrapElement> = []
-
-  private firstRender = true
 
   chain(middleware?: Middleware) {
     if (typeof middleware !== 'function') {
@@ -30,45 +28,41 @@ export class ReactChain {
     }
 
     this.middlewareChain.push(middleware)
-    this.firstRender = true
 
     return this
   }
 
-  async getElement(session = new Session()): Promise<ReactElement<any>> {
-    if (this.firstRender) {
-      this.elementChain = [createBase]
-
-      for (const middleware of this.middlewareChain) {
+  async getElement(session = new Session()): Promise<any> {
+    if (session.__firstRender) {
+      session.__elementChain = [createBase]
+      this.middlewareChain.forEach(middleware => {
         const createElement = middleware(session)
-
-        if (typeof createElement === 'function') {
-          this.elementChain.push(createElement)
+        if (createElement) {
+          session.__elementChain.push(createElement)
         }
-      }
+      })
+      session.__firstRender = false
     }
 
     let index = 0
-    this.firstRender = false
-
-    const next = async (): Promise<any> => {
-      const createElement = this.elementChain[index++]
-      const renderChildren = this.elementChain[index]
-        ? await next
+    const next = (): Promise<any> => {
+      const createElement = session.__elementChain[index++]
+      const renderChildren = session.__elementChain[index]
+        ? next
         : () => Promise.resolve(null)
-      return createElement(renderChildren, session)
+      return Promise.resolve(createElement(renderChildren, session))
     }
 
     return await next()
   }
 
-  renderBrowser(session: Session, onRender: Function) {
-    session.render('browser', onRender)
+  renderBrowser(session: Session, onRender: () => void) {
+    render(session, 'browser')(onRender)
   }
 
   renderServer(session: Session, onRender: Function) {
-    let body: string = ''
-    session.render('server', () => {
+    let body = ''
+    render(session, 'server')(() => {
       body = onRender()
     })
     return body

@@ -1,4 +1,6 @@
 import Session from '../Session'
+import * as React from 'react'
+import { render } from '../SessionUtils'
 
 describe('Session', () => {
   it('should throw if render isn\'t a function', () => {
@@ -46,11 +48,11 @@ describe('Session', () => {
       serverCallOrder.push('SERVER_RENDER_2')
     })
 
-    session.render('browser', () => {
+    render(session, 'browser')(() => {
       browserCallOrder.push('ACTUAL_RENDER')
     })
 
-    session.render('server', () => {
+    render(session, 'server')(() => {
       serverCallOrder.push('ACTUAL_RENDER')
       return ''
     })
@@ -82,7 +84,7 @@ describe('Session', () => {
     session.on('browser', render => { })
 
     expect(() => {
-      session.render('browser', () => { })
+      render(session, 'browser')()
     }).toThrow()
   })
 
@@ -99,8 +101,13 @@ describe('Session', () => {
       render()
     })
 
-    session.render('browser', () => { })
+    render(session, 'browser')()
 
     expect(session.props).toHaveProperty('someEdit', 'someEdit anotherEdit')
+  })
+
+  it('should keep track of current render chain', () => {
+    const session = new Session()
+    expect(session).toHaveProperty('__elementChain')
   })
 })

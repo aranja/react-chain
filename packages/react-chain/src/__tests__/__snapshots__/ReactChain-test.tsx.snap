@@ -1,3 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ReactChain .chain() should throw if a middleware isn't a function 1`] = `"A react-chain middleware should be a function"`;
+
+exports[`ReactChain .getElement() should throw if session is undefined 1`] = `"Missing session object."`;

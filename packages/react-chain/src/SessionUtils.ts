@@ -27,9 +27,10 @@ export function renderRecursively(wrappers: WrapRender[], onComplete: Function) 
   }
 
   let didCallRenderers = false
-  const wrappedComplete = (...args: any[]) => {
+
+  function wrappedComplete() {
     didCallRenderers = true
-    return onComplete(...args)
+    return onComplete.apply(null, arguments)
   }
 
   function next() {

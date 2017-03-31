@@ -32,7 +32,11 @@ export class ReactChain {
     return this
   }
 
-  async getElement(session = new Session()): Promise<any> {
+  async getElement(session?: Session): Promise<any> {
+    if (session == null) {
+      throw new Error('Missing session object.')
+    }
+
     if (session.__firstRender) {
       session.__elementChain = [createBase]
       this.middlewareChain.forEach(middleware => {

@@ -6,9 +6,11 @@ import { ReactChainBase } from '../ReactChainBase'
 
 describe('ReactChain', () => {
   let app: ReactChain
+  let session: Session
 
   beforeEach(() => {
     app = createReactChain()
+    session = new Session()
   })
 
   describe('.chain()', () => {
@@ -46,7 +48,7 @@ describe('ReactChain', () => {
         return <div className="wrap">{element}</div>
       })
 
-      const element = await app.getElement()
+      const element = await app.getElement(session)
       const wrapper = shallow(element)
 
       expect(wrapper.html()).toBe('<div class="wrap"></div>')
@@ -54,8 +56,15 @@ describe('ReactChain', () => {
   })
 
   describe('.getElement()', () => {
+    it('should throw if session is undefined', done => {
+      app.getElement().catch((err) => {
+        expect(err.message).toMatchSnapshot()
+        done()
+      })
+    })
+
     it('should wrap with ReactChainBase', async () => {
-      const element = await app.getElement()
+      const element = await app.getElement(session)
       const wrapper = shallow(element)
       const instance = wrapper.instance()
 
@@ -63,10 +72,27 @@ describe('ReactChain', () => {
     })
 
     it('should wrap same ReactChainBase component each time', async () => {
-      const element1 = await app.getElement()
-      const element2 = await app.getElement()
+      const element1 = await app.getElement(session)
+      const element2 = await app.getElement(session)
 
       expect(element1.type).toEqual(element2.type)
+    })
+
+    it('should reuse previous session and element chain each time', async () => {
+      const actual: any[] = []
+
+      app.chain(session => () => {
+        actual.push(session)
+        return <div />
+      })
+
+      await app.getElement(session)
+      await app.getElement(session)
+
+      expect(actual).toEqual([
+        session,
+        session,
+      ])
     })
   })
 

@@ -17,7 +17,7 @@
     "test": "../../node_modules/.bin/jest"
   },
   "devDependencies": {
-    "@types/react-helmet": "0.0.28"
+    "@types/react-helmet": "^5.0.0"
   },
   "peerDependencies": {
     "react": "^15.4.2"

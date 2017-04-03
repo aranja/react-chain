@@ -1,4 +1,4 @@
-import * as Helmet from 'react-helmet'
+import Helmet from 'react-helmet'
 
 const helmet = () => (session: any) => {
   session.on('server', (render: Function) => {

@@ -77,6 +77,9 @@ export class ReactChain {
   }
 }
 
+export { default as renderClient } from './render/RenderClient'
+export { default as renderServer } from './render/RenderServer'
+
 export default function createReactChain() {
   return new ReactChain()
 }

@@ -1,9 +1,13 @@
 import { render } from 'react-dom'
-import Session from '../Session'
 import { ReactChain } from '../ReactChain'
+import { ExposedSessionT } from '../Session'
+
+export type ClientSessionT = ExposedSessionT & {
+  refresh: (onComplete?: Function) => Promise<any>
+}
 
 function startClient(chain: ReactChain, domNode: Element) {
-  const session = new Session()
+  const session = chain.createSession() as ClientSessionT
 
   async function refresh(onComplete?: Function) {
     const element = await chain.getElement(session)
@@ -15,6 +19,7 @@ function startClient(chain: ReactChain, domNode: Element) {
   }
 
   session.refresh = refresh
+
   return refresh()
 }
 

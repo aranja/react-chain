@@ -1,7 +1,12 @@
-import Session from '../Session'
+import { ExposedSessionT } from '../Session'
 import { ComponentClass, createElement } from 'react'
 import { renderToStaticMarkup, renderToString } from 'react-dom/server'
 import { ReactChain } from '../ReactChain'
+
+export type ServerSessionT = ExposedSessionT & {
+  req: Request
+  res: Response
+}
 
 export interface ServerConfig<DocType> {
   assets?: any,
@@ -10,7 +15,7 @@ export interface ServerConfig<DocType> {
 
 function renderServer(chain: ReactChain, config: ServerConfig<ComponentClass<any>> = {}) {
   return async function (request?: any, response?: any, next?: Function) {
-    const session = new Session()
+    const session = chain.createSession() as ServerSessionT
     let html = ''
 
     session.req = request

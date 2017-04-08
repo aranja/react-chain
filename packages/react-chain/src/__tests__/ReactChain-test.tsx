@@ -13,6 +13,13 @@ describe('ReactChain', () => {
     session = new Session()
   })
 
+  describe('.createSession()', () => {
+    it('should return a new Session instance', () => {
+      expect(typeof app.createSession).toBe('function')
+      expect(app.createSession()).toBeInstanceOf(Session)
+    })
+  })
+
   describe('.chain()', () => {
     test('is callable', () => {
       expect(typeof app.chain).toBe('function')

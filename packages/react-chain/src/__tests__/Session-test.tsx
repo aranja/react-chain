@@ -1,58 +1,59 @@
-import Session from '../Session'
+import createSession, { InternalSessionT } from '../Session'
 import * as React from 'react'
 import { render } from '../SessionUtils'
 
 describe('Session', () => {
-  it('should throw if render isn\'t a function', () => {
-    const session = new Session()
+  let internalSession: InternalSessionT
 
+  beforeEach(() => {
+    internalSession = createSession()
+  })
+
+  it('should throw if render isn\'t a function', () => {
     expect(() => {
-      session.on('browser')
+      internalSession.on('browser')
     }).toThrowErrorMatchingSnapshot()
   })
 
   it('should throw for unknown targets', () => {
-    const session = new Session()
-
     expect(() => {
-      session.on()
+      internalSession.on()
     }).toThrowErrorMatchingSnapshot()
   })
 
   it('unfolds correct middleware chain', () => {
     const browserCallOrder: string[] = []
     const serverCallOrder: string[] = []
-    const session = new Session()
 
-    session.on('browser', render => {
+    internalSession.on('browser', render => {
       browserCallOrder.push('BROWSER_RENDER_1')
       render()
       browserCallOrder.push('BROWSER_RENDER_1')
     })
 
-    session.on('browser', render => {
+    internalSession.on('browser', render => {
       browserCallOrder.push('BROWSER_RENDER_2')
       render()
       browserCallOrder.push('BROWSER_RENDER_2')
     })
 
-    session.on('server', render => {
+    internalSession.on('server', render => {
       serverCallOrder.push('SERVER_RENDER_1')
       render()
       serverCallOrder.push('SERVER_RENDER_1')
     })
 
-    session.on('server', render => {
+    internalSession.on('server', render => {
       serverCallOrder.push('SERVER_RENDER_2')
       render()
       serverCallOrder.push('SERVER_RENDER_2')
     })
 
-    render(session, 'browser')(() => {
+    render(internalSession, 'browser')(() => {
       browserCallOrder.push('ACTUAL_RENDER')
     })
 
-    render(session, 'server')(() => {
+    render(internalSession, 'server')(() => {
       serverCallOrder.push('ACTUAL_RENDER')
       return ''
     })
@@ -75,39 +76,40 @@ describe('Session', () => {
   })
 
   it('should throw if fails to call render', () => {
-    const session = new Session()
-
-    session.on('browser', render => {
+    internalSession.on('browser', render => {
       render()
     })
 
-    session.on('browser', render => { })
+    internalSession.on('browser', render => { })
 
     expect(() => {
-      render(session, 'browser')()
+      render(internalSession, 'browser')()
     }).toThrow()
   })
 
-  it('can modify the context', () => {
-    const session = new Session()
+  it('can modify the public facing instance', () => {
+    const { public: session } = internalSession
 
-    session.on('browser', render => {
-      session.props.someEdit = 'someEdit'
+    if (!session) {
+      throw new Error()
+    }
+
+    internalSession.on('browser', render => {
+      session.someEdit = 'someEdit'
       render()
     })
 
-    session.on('browser', render => {
-      session.props.someEdit += ' anotherEdit'
+    internalSession.on('browser', render => {
+      session.someEdit += ' anotherEdit'
       render()
     })
 
-    render(session, 'browser')()
+    render(internalSession, 'browser')()
 
-    expect(session.props).toHaveProperty('someEdit', 'someEdit anotherEdit')
+    expect(internalSession.public).toHaveProperty('someEdit', 'someEdit anotherEdit')
   })
 
   it('should keep track of current render chain', () => {
-    const session = new Session()
-    expect(session).toHaveProperty('__elementChain')
+    expect(internalSession).toHaveProperty('elementChain')
   })
 })

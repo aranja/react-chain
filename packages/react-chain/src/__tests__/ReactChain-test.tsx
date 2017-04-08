@@ -1,22 +1,21 @@
 import createReactChain, { ReactChain } from '../ReactChain'
-import Session from '../Session'
+import createSession, { InternalSessionT } from '../Session'
 import * as React from 'react'
 import { shallow } from 'enzyme'
 import { ReactChainBase } from '../ReactChainBase'
 
 describe('ReactChain', () => {
   let app: ReactChain
-  let session: Session
+  let session: InternalSessionT
 
   beforeEach(() => {
     app = createReactChain()
-    session = new Session()
+    session = createSession()
   })
 
   describe('.createSession()', () => {
-    it('should return a new Session instance', () => {
-      expect(typeof app.createSession).toBe('function')
-      expect(app.createSession()).toBeInstanceOf(Session)
+    it('should create a new internal session object', () => {
+      expect(app.createSession).toEqual(createSession)
     })
   })
 
@@ -34,19 +33,17 @@ describe('ReactChain', () => {
     })
 
     it('should have mutable props', async () => {
-      const session = new Session()
-
       app.chain(session => {
-        session.props.someEdit = 'someEdit'
+        session.someEdit = 'someEdit'
       })
 
       app.chain(session => {
-        session.props.someEdit += ' anotherEdit'
+        session.someEdit += ' anotherEdit'
       })
 
       await app.getElement(session)
 
-      expect(session.props).toHaveProperty('someEdit', 'someEdit anotherEdit')
+      expect(session).toHaveProperty('someEdit', 'someEdit anotherEdit')
     })
 
     it('should always be possible to await next, even at the end of the chain', async () => {
@@ -109,7 +106,6 @@ describe('ReactChain', () => {
     })
 
     it('should return the string returned from the callback', () => {
-      const session = new Session()
       const body = app.renderServer(session, () => 'foo')
       expect(body).toBe('foo')
     })

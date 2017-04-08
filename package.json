@@ -41,7 +41,10 @@
   },
   "jest": {
     "collectCoverageFrom": [
-      "**/packages/*/src/**/*"
+      "**/packages/*/src/**/*",
+      "!**/lib/**",
+      "!**/__mocks__/**",
+      "!**/__tests__/**"
     ],
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"

@@ -16,13 +16,13 @@ describe('react-chain-helmet', () => {
     const next = jest.fn()
     const on = jest.fn((target, render) => {
       render(next)
-      expect(sessionMock.props).toHaveProperty('helmet', true)
+      expect(sessionMock.headProps).toHaveProperty('helmet', true)
       expect(next).toHaveBeenCalled()
       done()
     })
     const sessionMock = {
       on,
-      props: {},
+      headProps: {},
     }
     chainHelmet()(sessionMock)
   })

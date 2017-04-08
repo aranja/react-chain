@@ -1,7 +1,8 @@
-import createBase from './ReactChainBase'
+import reactChainProvider from './ReactChainProvider'
 import createSession, { ExposedSessionT, InternalSessionT } from './Session'
 import { ReactElement } from 'react'
 import { render } from './SessionUtils'
+import reactChainInitMiddleware from './ReactChainInit'
 
 export type RenderTarget =
   'browser' |
@@ -20,7 +21,7 @@ export type Middleware =
     (void | WrapElement)
 
 export class ReactChain {
-  protected middlewareChain: Array<Middleware> = []
+  middlewareChain: Array<Middleware> = [reactChainInitMiddleware]
 
   chain(middleware?: Middleware) {
     if (typeof middleware !== 'function') {
@@ -40,7 +41,7 @@ export class ReactChain {
     }
 
     if (session.firstRender) {
-      session.elementChain = [createBase]
+      session.elementChain = [reactChainProvider]
       this.middlewareChain.forEach(middleware => {
         const createElement = middleware(session)
         if (createElement) {

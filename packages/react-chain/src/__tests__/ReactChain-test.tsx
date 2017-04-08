@@ -2,7 +2,8 @@ import createReactChain, { ReactChain } from '../ReactChain'
 import createSession, { InternalSessionT } from '../Session'
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import { ReactChainBase } from '../ReactChainBase'
+import { ReactChainProvider } from '../ReactChainProvider'
+import reactChainInitMiddleware from '../ReactChainInit'
 
 describe('ReactChain', () => {
   let app: ReactChain
@@ -57,6 +58,11 @@ describe('ReactChain', () => {
 
       expect(wrapper.html()).toBe('<div class="wrap"></div>')
     })
+
+    it('should initialize the chain with ReactChainInit', async () => {
+      expect(app.middlewareChain.length).toBe(1)
+      expect(app.middlewareChain[0]).toBe(reactChainInitMiddleware)
+    })
   })
 
   describe('.getElement()', () => {
@@ -67,15 +73,15 @@ describe('ReactChain', () => {
       })
     })
 
-    it('should wrap with ReactChainBase', async () => {
+    it('should wrap with ReactChainProvider', async () => {
       const element = await app.getElement(session)
       const wrapper = shallow(element)
       const instance = wrapper.instance()
 
-      expect(instance).toBeInstanceOf(ReactChainBase)
+      expect(instance).toBeInstanceOf(ReactChainProvider)
     })
 
-    it('should wrap same ReactChainBase component each time', async () => {
+    it('should wrap same ReactChainProvider component each time', async () => {
       const element1 = await app.getElement(session)
       const element2 = await app.getElement(session)
 

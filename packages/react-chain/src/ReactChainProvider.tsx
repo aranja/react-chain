@@ -10,9 +10,11 @@ export type Props = {
 export type RenderChildren =
   null | (() => Promise<React.ReactElement<any>>)
 
-export class ReactChainBase extends React.Component<Props, any> {
+export class ReactChainProvider extends React.Component<Props, any> {
   static childContextTypes = {
     htmlProps: React.PropTypes.object.isRequired,
+    headProps: React.PropTypes.object.isRequired,
+    window: React.PropTypes.object.isRequired,
   }
 
   getChildContext() {
@@ -24,9 +26,8 @@ export class ReactChainBase extends React.Component<Props, any> {
   }
 }
 
-async function createBase(renderChildren: RenderChildren, context: ExposedSessionT) {
-  const element = renderChildren && await renderChildren()
-  return React.createElement(ReactChainBase, { context }, element)
-}
 
-export default createBase
+export default async function createBase(next: RenderChildren, context: ExposedSessionT) {
+  const element = next && await next()
+  return React.createElement(ReactChainProvider, { context }, element)
+}

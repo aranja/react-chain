@@ -1,7 +1,7 @@
 import createBase from './ReactChainBase'
-import { ReactElement } from 'react'
 import Session from './Session'
-import { getChainForTarget, renderRecursively, render } from './SessionUtils'
+import { ReactElement } from 'react'
+import { render } from './SessionUtils'
 
 export type RenderTarget =
   'browser' |
@@ -30,6 +30,10 @@ export class ReactChain {
     this.middlewareChain.push(middleware)
 
     return this
+  }
+
+  createSession() {
+    return new Session()
   }
 
   async getElement(session?: Session): Promise<any> {

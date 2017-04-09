@@ -1,7 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`ReactChain .chain() should throw when createElement is not a function 1`] = `"[chain()] createElement should be a function."`;
-
-exports[`ReactChain .chain() should throw when wrapClientRender is not a function 1`] = `"[chain()] wrapClientRender should be a function."`;
-
-exports[`ReactChain .chain() should throw when wrapServerRender is not a function 1`] = `"[chain()] wrapServerRender should be a function."`;

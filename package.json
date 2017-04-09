@@ -1,5 +1,5 @@
 {
-  "name": "react-chain",
+  "name": "react-chain-project",
   "version": "0.1.0",
   "description": "A chain of pluggable logic for your React rendering pipline.",
   "repository": "git@github.com:aranja/react-chain.git",
@@ -41,13 +41,10 @@
   },
   "jest": {
     "collectCoverageFrom": [
-      "**/packages/react-chain*/**/*",
+      "**/packages/*/src/**/*",
       "!**/lib/**",
       "!**/__mocks__/**",
       "!**/__tests__/**"
-    ],
-    "coverageReporters": [
-      "json"
     ],
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
@@ -55,14 +52,15 @@
     "testResultsProcessor": "<rootDir>/node_modules/ts-jest/coverageprocessor.js",
     "testPathIgnorePatterns": [
       "/node_modules/",
-      "/packages/*/lib/",
+      "lib",
       "\\.snap$"
     ],
     "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
     "moduleFileExtensions": [
       "ts",
       "tsx",
-      "js"
+      "js",
+      "json"
     ]
   }
 }

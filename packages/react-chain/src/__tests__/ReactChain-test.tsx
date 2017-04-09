@@ -7,11 +7,11 @@ import reactChainInitMiddleware from '../ReactChainInit'
 
 describe('ReactChain', () => {
   let app: ReactChain
-  let session: InternalSessionT
+  let internalSession: InternalSessionT
 
   beforeEach(() => {
     app = createReactChain()
-    session = createSession()
+    internalSession = createSession()
   })
 
   describe('.createSession()', () => {
@@ -30,7 +30,7 @@ describe('ReactChain', () => {
     })
 
     it('should return the chain instance', () => {
-      expect(app.chain(() => {})).toBe(app)
+      expect(app.chain(() => { })).toBe(app)
     })
 
     it('should have mutable props', async () => {
@@ -42,9 +42,9 @@ describe('ReactChain', () => {
         session.someEdit += ' anotherEdit'
       })
 
-      await app.getElement(session)
+      await app.getElement(internalSession)
 
-      expect(session).toHaveProperty('someEdit', 'someEdit anotherEdit')
+      expect(internalSession.public).toHaveProperty('someEdit', 'someEdit anotherEdit')
     })
 
     it('should always be possible to await next, even at the end of the chain', async () => {
@@ -53,7 +53,7 @@ describe('ReactChain', () => {
         return <div className="wrap">{element}</div>
       })
 
-      const element = await app.getElement(session)
+      const element = await app.getElement(internalSession)
       const wrapper = shallow(element)
 
       expect(wrapper.html()).toBe('<div class="wrap"></div>')
@@ -74,7 +74,7 @@ describe('ReactChain', () => {
     })
 
     it('should wrap with ReactChainProvider', async () => {
-      const element = await app.getElement(session)
+      const element = await app.getElement(internalSession)
       const wrapper = shallow(element)
       const instance = wrapper.instance()
 
@@ -82,8 +82,8 @@ describe('ReactChain', () => {
     })
 
     it('should wrap same ReactChainProvider component each time', async () => {
-      const element1 = await app.getElement(session)
-      const element2 = await app.getElement(session)
+      const element1 = await app.getElement(internalSession)
+      const element2 = await app.getElement(internalSession)
 
       expect(element1.type).toEqual(element2.type)
     })
@@ -96,12 +96,12 @@ describe('ReactChain', () => {
         return <div />
       })
 
-      await app.getElement(session)
-      await app.getElement(session)
+      await app.getElement(internalSession)
+      await app.getElement(internalSession)
 
       expect(actual).toEqual([
-        session,
-        session,
+        internalSession.public,
+        internalSession.public,
       ])
     })
   })
@@ -112,7 +112,7 @@ describe('ReactChain', () => {
     })
 
     it('should return the string returned from the callback', () => {
-      const body = app.renderServer(session, () => 'foo')
+      const body = app.renderServer(internalSession, () => 'foo')
       expect(body).toBe('foo')
     })
   })

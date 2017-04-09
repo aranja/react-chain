@@ -43,7 +43,7 @@ export class ReactChain {
     if (session.firstRender) {
       session.elementChain = [reactChainProvider]
       this.middlewareChain.forEach(middleware => {
-        const createElement = middleware(session)
+        const createElement = middleware(session.public)
         if (createElement) {
           session.elementChain.push(createElement)
         }

@@ -14,7 +14,7 @@ export interface InternalSessionT {
   serverChain: Array<WrapRender>
   elementChain: Array<WrapElement>
   firstRender: boolean
-  public?: ExposedSessionT
+  exposed?: ExposedSessionT
   on: OnT
 }
 
@@ -37,7 +37,7 @@ export default function() {
     chain.push(render)
   }
 
-  session.public = {
+  session.exposed = {
     on: session.on,
   }
 

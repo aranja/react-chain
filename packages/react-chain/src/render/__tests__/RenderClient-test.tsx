@@ -41,7 +41,7 @@ describe('renderClient()', () => {
     app.getElement = jest.fn((internalSession) => { session = internalSession })
     app.renderBrowser = jest.fn()
     await renderClient(app, appRoot)
-    expect(typeof session.public.refresh).toBe('function')
+    expect(typeof session.exposed.refresh).toBe('function')
   })
 
   it('should render a React component to the appRoot', async () => {

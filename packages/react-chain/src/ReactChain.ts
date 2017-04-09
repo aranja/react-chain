@@ -43,7 +43,7 @@ export class ReactChain {
     if (session.firstRender) {
       session.elementChain = [reactChainProvider]
       this.middlewareChain.forEach(middleware => {
-        const createElement = middleware(session.public)
+        const createElement = middleware(session.exposed)
         if (createElement) {
           session.elementChain.push(createElement)
         }
@@ -57,7 +57,7 @@ export class ReactChain {
       const renderChildren = session.elementChain[index]
         ? next
         : () => Promise.resolve(null)
-      return Promise.resolve(createElement(renderChildren, session.public))
+      return Promise.resolve(createElement(renderChildren, session.exposed))
     }
 
     return await next()

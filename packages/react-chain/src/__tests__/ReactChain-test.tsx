@@ -44,7 +44,7 @@ describe('ReactChain', () => {
 
       await app.getElement(internalSession)
 
-      expect(internalSession.public).toHaveProperty('someEdit', 'someEdit anotherEdit')
+      expect(internalSession.exposed).toHaveProperty('someEdit', 'someEdit anotherEdit')
     })
 
     it('should always be possible to await next, even at the end of the chain', async () => {
@@ -100,8 +100,8 @@ describe('ReactChain', () => {
       await app.getElement(internalSession)
 
       expect(actual).toEqual([
-        internalSession.public,
-        internalSession.public,
+        internalSession.exposed,
+        internalSession.exposed,
       ])
     })
   })

@@ -23,13 +23,13 @@ function renderServer(
     let element: ReactElement<any>
     let body = ''
 
-    session.public.req = request
-    session.public.res = response
+    session.exposed.req = request
+    session.exposed.res = response
 
     try {
       element = await chain.getElement(session)
       body = chain.renderServer(session, () => renderToString(element))
-      response.status(session.public.status || 200)
+      response.status(session.exposed.status || 200)
     } catch (error) {
       props.title = 'Internal Server Error'
       props.description = error.message
@@ -40,7 +40,7 @@ function renderServer(
       }
     }
 
-    const { on, ...context } = session.public
+    const { on, ...context } = session.exposed
     const html = renderToStaticMarkup(createElement(
       Document as ComponentClass<any>, { ...props, context }, body,
     ))

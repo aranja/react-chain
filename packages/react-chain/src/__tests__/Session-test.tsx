@@ -87,8 +87,8 @@ describe('Session', () => {
     }).toThrow()
   })
 
-  it('can modify the public facing instance', () => {
-    const { public: session } = internalSession
+  it('can modify the exposed instance', () => {
+    const { exposed: session } = internalSession
 
     if (!session) {
       throw new Error()
@@ -106,7 +106,7 @@ describe('Session', () => {
 
     render(internalSession, 'browser')()
 
-    expect(internalSession.public).toHaveProperty('someEdit', 'someEdit anotherEdit')
+    expect(internalSession.exposed).toHaveProperty('someEdit', 'someEdit anotherEdit')
   })
 
   it('should keep track of current render chain', () => {

@@ -1,18 +1,25 @@
-import * as ReactDOM from 'react-dom'
-import createContext from '../Context'
+import { render } from 'react-dom'
 import { ReactChain } from '../ReactChain'
+import { ExposedSessionT } from '../Session'
+
+export type ClientSessionT = ExposedSessionT & {
+  refresh: (onComplete?: Function) => Promise<any>
+}
 
 function startClient(chain: ReactChain, domNode: Element) {
-  const context = createContext()
+  const session = chain.createSession() as ClientSessionT
 
-  async function refresh(onComplete = () => {}) {
-    const element = await chain.getElement(context)
-    return await chain.renderClient(context, () => {
-      ReactDOM.render(element, domNode, onComplete)
+  async function refresh(onComplete?: Function) {
+    const element = await chain.getElement(session)
+
+    return await chain.renderBrowser(session, () => {
+      // Note: Typecasting to avoid weird, incorrect type checks.
+      render(element as any, domNode as any, onComplete as any)
     })
   }
 
-  context.refresh = refresh
+  session.refresh = refresh
+
   return refresh()
 }
 

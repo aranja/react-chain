@@ -24,16 +24,17 @@ export default function() {
     serverChain: [],
     elementChain: [],
     firstRender: true,
+    on() {}
+  }
 
-    on(target?: RenderTarget, render?: WrapRender) {
-      const chain = getChainForTarget(this, target)
+  session.on = function(target?: RenderTarget, render?: WrapRender) {
+    const chain = getChainForTarget(session, target)
 
-      if (typeof render !== 'function') {
-        throw new Error('session.on: render should be a function.')
-      }
-
-      chain.push(render)
+    if (typeof render !== 'function') {
+      throw new Error('session.on: render should be a function.')
     }
+
+    chain.push(render)
   }
 
   session.public = {

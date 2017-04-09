@@ -37,11 +37,11 @@ describe('renderClient()', () => {
   })
 
   it('should add a refresh function on the context', async () => {
-    let session = { refresh: null }
+    let session = app.createSession()
     app.getElement = jest.fn((internalSession) => { session = internalSession })
     app.renderBrowser = jest.fn()
     await renderClient(app, appRoot)
-    expect(typeof session.refresh).toBe('function')
+    expect(typeof session.public.refresh).toBe('function')
   })
 
   it('should render a React component to the appRoot', async () => {

@@ -4,4 +4,4 @@ reactHelmet.rewind = function () {
   return true
 }
 
-module.exports = reactHelmet
+module.exports.default = reactHelmet

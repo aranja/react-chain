@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Session should throw for unknown targets 1`] = `"'undefined' is not a valid render target. A render target can either be 'browser' or 'server'."`;
+
+exports[`Session should throw if render isn't a function 1`] = `"session.on: render should be a function."`;

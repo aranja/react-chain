@@ -1,109 +1,83 @@
-import createContext, { Context } from './Context'
-import createBase from './ReactChainBase'
+import reactChainProvider from './ReactChainProvider'
+import createSession, { ExposedSessionT, InternalSessionT } from './Session'
 import { ReactElement } from 'react'
+import { render } from './SessionUtils'
+import reactChainInitMiddleware from './ReactChainInit'
+
+export type RenderTarget =
+  'browser' |
+  'server'
 
 export type WrapElement =
-  (renderChildren: () => Promise<null | ReactElement<any>>, context: Context<any>) =>
-    Promise<ReactElement<any>>
+  (renderChildren: () => Promise<null | ReactElement<any>>, context: any) =>
+    ReactElement<any> | Promise<ReactElement<any>>
 
 export type WrapRender =
-  (render: Function, context: Context<any>) =>
+  (render: Function) =>
     void
 
-export interface Middleware {
-  createElement?: WrapElement
-  wrapClientRender?: WrapRender
-  wrapServerRender?: WrapRender
-}
+export type Middleware =
+  (session: ExposedSessionT) =>
+    (void | WrapElement)
 
 export class ReactChain {
-  protected elementChain: Array<WrapElement> = []
-  protected clientChain: Array<WrapRender> = []
-  protected serverChain: Array<WrapRender> = []
+  middlewareChain: Array<Middleware> = [reactChainInitMiddleware]
 
-  chain(middleware: WrapElement | Middleware) {
-    if (typeof middleware === 'function') {
-      middleware = {
-        createElement: middleware,
-      }
+  chain(middleware?: Middleware) {
+    if (typeof middleware !== 'function') {
+      throw new Error('A react-chain middleware should be a function')
     }
 
-    if (middleware.createElement) {
-      if (typeof middleware.createElement !== 'function') {
-        throw new Error('[chain()] createElement should be a function.')
-      }
-      this.elementChain.push(middleware.createElement)
-    }
-
-    if (middleware.wrapClientRender) {
-      if (typeof middleware.wrapClientRender !== 'function') {
-        throw new Error('[chain()] wrapClientRender should be a function.')
-      }
-      this.clientChain.push(middleware.wrapClientRender)
-    }
-
-    if (middleware.wrapServerRender) {
-      if (typeof middleware.wrapServerRender !== 'function') {
-        throw new Error('[chain()] wrapServerRender should be a function.')
-      }
-      this.serverChain.push(middleware.wrapServerRender)
-    }
+    this.middlewareChain.push(middleware)
 
     return this
   }
 
-  async getElement(context = createContext({})): Promise<ReactElement<any>> {
-    const elementChain = [createBase, ...this.elementChain]
-    let index = 0
+  createSession = createSession
 
-    async function next(): Promise<any> {
-      const createElement = elementChain[index++]
-      const renderChildren = elementChain[index]
-        ? await next
+  async getElement(session?: InternalSessionT): Promise<any> {
+    if (session == null) {
+      throw new Error('Missing session object.')
+    }
+
+    if (session.firstRender) {
+      session.elementChain = [reactChainProvider]
+      this.middlewareChain.forEach(middleware => {
+        const createElement = middleware(session)
+        if (createElement) {
+          session.elementChain.push(createElement)
+        }
+      })
+      session.firstRender = false
+    }
+
+    let index = 0
+    const next = (): Promise<any> => {
+      const createElement = session.elementChain[index++]
+      const renderChildren = session.elementChain[index]
+        ? next
         : () => Promise.resolve(null)
-      return createElement(renderChildren, context)
+      return Promise.resolve(createElement(renderChildren, session.public))
     }
 
     return await next()
   }
 
-  renderClient(context: Context<any>, onRender: Function) {
-    return new Promise(resolve => {
-      this.renderWrapper(this.clientChain, context, () => {
-        onRender()
-        resolve()
-      })
-    })
+  renderBrowser(session: InternalSessionT, onRender: () => void) {
+    render(session, 'browser')(onRender)
   }
 
-  renderServer(context: Context<any>, onRender: Function) {
-    let body: string = ''
-    this.renderWrapper(this.serverChain, context, () => {
+  renderServer(session: InternalSessionT, onRender: Function) {
+    let body = ''
+    render(session, 'server')(() => {
       body = onRender()
     })
     return body
   }
-
-  private renderWrapper(
-    wrappers: Array<WrapRender>,
-    context: Context<any>,
-    onComplete: () => void
-  ) {
-    let index = 0
-
-    if (wrappers.length === 0) {
-      onComplete()
-      return
-    }
-
-    function render() {
-      const wrap = wrappers[index++]
-      wrap(wrappers[index] == null ? onComplete : render, context)
-    }
-
-    render()
-  }
 }
+
+export { default as renderClient } from './render/RenderClient'
+export { default as renderServer } from './render/RenderServer'
 
 export default function createReactChain() {
   return new ReactChain()

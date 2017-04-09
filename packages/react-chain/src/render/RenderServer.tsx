@@ -1,7 +1,12 @@
-import createContext from '../Context'
+import { ExposedSessionT } from '../Session'
 import { ComponentClass, createElement } from 'react'
 import { renderToStaticMarkup, renderToString } from 'react-dom/server'
 import { ReactChain } from '../ReactChain'
+
+export type ServerSessionT = ExposedSessionT & {
+  req: Request
+  res: Response
+}
 
 export interface ServerConfig<DocType> {
   assets?: any,
@@ -9,27 +14,30 @@ export interface ServerConfig<DocType> {
 }
 
 function renderServer(chain: ReactChain, config: ServerConfig<ComponentClass<any>> = {}) {
-  return async function(request?: any, response?: any, next?: Function) {
-    const context = createContext({ request, response })
+  return async function (request?: any, response?: any, next?: Function) {
+    const session = chain.createSession() as ServerSessionT
     let html = ''
+
+    session.req = request
+    session.res = response
 
     if (typeof config.Document === 'undefined') {
       throw new Error()
     }
 
     try {
-      const element = await chain.getElement(context)
-      const body = chain.renderServer(context, () => renderToString(element))
-      const { htmlProps, request, response, ...rest } = context
+      const element = await chain.getElement(session)
+      const body = chain.renderServer(session, () => renderToString(element))
+      const { props, req, res, ...rest } = session
       html = renderToStaticMarkup(createElement(config.Document, {
-        ...htmlProps,
+        ...props,
         assets: config.assets || {},
         context: { ...rest },
       }, body))
     } catch (error) {
-      const { htmlProps, request, response, ...rest } = context
+      const { props, req, res, ...rest } = session
       html = renderToStaticMarkup(createElement(config.Document, {
-        ...htmlProps,
+        ...props,
         assets: config.assets || {},
         context: { ...rest },
         title: 'Internal Server Error',

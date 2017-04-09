@@ -1,7 +1,7 @@
 import renderClient from '../RenderClient'
 import createReactChain from '../../ReactChain'
 import { ReactChain } from '../../ReactChain'
-import { createElement } from 'react'
+import * as React from 'react'
 
 describe('renderClient()', () => {
   let appRoot: Element
@@ -24,45 +24,44 @@ describe('renderClient()', () => {
   })
 
   it('should await getElement before rendering', async () => {
-    let runOrder = 0
-    app.getElement = jest.fn(() => { runOrder = 2 })
-    app.renderClient = jest.fn(() => { runOrder *= 4 })
+    const callOrder: string[] = []
+    app.getElement = jest.fn(() => callOrder.push('GET_ELEMENT'))
+    app.renderBrowser = jest.fn(() => callOrder.push('RENDER_BROWSER'))
     await renderClient(app, appRoot)
     expect(app.getElement).toHaveBeenCalled()
-    expect(app.renderClient).toHaveBeenCalled()
-    expect(runOrder).toBe(8)
+    expect(app.renderBrowser).toHaveBeenCalled()
+    expect(callOrder).toEqual([
+      'GET_ELEMENT',
+      'RENDER_BROWSER',
+    ])
   })
 
   it('should add a refresh function on the context', async () => {
-    let context = { refresh: null }
-    app.getElement = jest.fn((internalContext) => { context = internalContext })
-    app.renderClient = jest.fn()
+    let session = { refresh: null }
+    app.getElement = jest.fn((internalSession) => { session = internalSession })
+    app.renderBrowser = jest.fn()
     await renderClient(app, appRoot)
-    expect(typeof context.refresh).toBe('function')
+    expect(typeof session.refresh).toBe('function')
   })
 
   it('should render a React component to the appRoot', async () => {
-    app.chain(() => createElement('div', {}, 'React Element'))
+    app.chain((session) => () => <div>React Element</div>)
     await renderClient(app, appRoot)
     expect(appRoot.innerHTML).toMatchSnapshot()
   })
 
-  it('should rerender when refresh is called', (done) => {
-    let renderCount = 0
-
-    function onComplete() {
-      expect(renderCount).toBe(2)
-      done()
-    }
-
-    app.chain(() => createElement('div', {}, `Render count ${++renderCount}`))
-
-    app.chain({
-      wrapClientRender(render, context) {
-        if (renderCount === 1 && context.refresh) {
-          context.refresh(onComplete)
+  it('should rerender when refresh is called', done => {
+    app.chain(session => {
+      setTimeout(() => {
+        if (session.refresh) {
+          session.refresh(() => {
+            done()
+          })
         }
-        render()
+      })
+
+      return async next => {
+        return await next()
       }
     })
 

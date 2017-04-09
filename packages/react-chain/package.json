@@ -1,10 +1,10 @@
 {
   "name": "react-chain",
-  "version": "0.2.2",
+  "version": "0.3.0-alpha5",
   "description": "A chain of pluggable logic for your React rendering pipline.",
   "repository": "git@github.com:aranja/react-chain.git",
   "author": "Aranja",
-  "main": "lib/index.js",
+  "main": "lib/ReactChain.js",
   "license": "MIT",
   "scripts": {
     "clean": "rm -rf lib",

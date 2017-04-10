@@ -1,5 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`renderServer() should return a 500 on error 1`] = `"<!doctype html><div><h1>Internal Server Error</h1><p>Error message goes here...</p><div>Error: Error message goes here...</div></div>"`;
-
-exports[`renderServer() should throw if no Document is defined 1`] = `"renderServer requires a Document React component."`;

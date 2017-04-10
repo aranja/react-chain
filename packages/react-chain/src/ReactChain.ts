@@ -61,14 +61,18 @@ export class ReactChain {
     return await next()
   }
 
-  renderBrowser(session: SessionT, onRender: () => void) {
-    render(session, 'browser')(onRender)
+  async renderBrowser(session: SessionT, onRender: (element: ReactElement<any>) => void) {
+    const element = await this.getElement(session)
+    render(session, 'browser')(() => {
+      onRender(element)
+    })
   }
 
-  renderServer(session: SessionT, onRender: Function) {
+  async renderServer(session: SessionT, onRender: (element: ReactElement<any>) => string) {
+    const element = await this.getElement(session)
     let body = ''
     render(session, 'server')(() => {
-      body = onRender()
+      body = onRender(element)
     })
     return body
   }

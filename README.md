@@ -1,4 +1,4 @@
-# <img src="images/react chain logo.png" width="50%">
+<img src="images/react chain logo.png" width="50%">
 
 [![CircleCI](https://img.shields.io/circleci/project/github/aranja/react-chain.svg)](https://circleci.com/gh/aranja/react-chain) [![Greenkeeper badge](https://badges.greenkeeper.io/aranja/react-chain.svg)](https://greenkeeper.io/) [![codecov](https://codecov.io/gh/aranja/react-chain/branch/master/graph/badge.svg)](https://codecov.io/gh/aranja/react-chain)
 
@@ -6,7 +6,7 @@ react-chain simplifies the process of bootstraping browser, and server rendered 
 
 > **Note:** react-chain is in active development and the API is subject to change drastically before it hits version `1.0.0`.
 
-## Usage
+# Usage
 
 Install as dependency, using the package manager of your choice:
 
@@ -60,7 +60,74 @@ type WrapRender =
     void
 ```
 
-## Official Middleware
+### Official Middleware
 
 - [react-chain-helmet](packages/react-chain-helmet): Adds rewind logic to server rendering using [React Helmet](https://github.com/nfl/react-helmet).
 - [react-chain-history](packages/react-chain-history): A middlware for [history](https://github.com/reacttraining/history).
+
+## Render
+
+### Browser
+
+react-chain exposes a handy method, called `startClient`, which accepts two arguments, a react-chain instance, and a dom node to render the app in. This method wraps `ReactDOM.render` and adds a refresh method to the session, allowing middleware to trigger a rerender of the application.
+
+**Example:**
+```js
+// index.js
+
+import app from './app' // <-- the previously create react-chain application.
+import { startClient } from 'react-chain'
+
+startClient(app, document.querySelector('#app'))
+```
+
+### Server-side rendering
+
+Server rendering requires a bit more configuration and thus we do not ship a rendering method in this version. This may, or may not change in the future.
+
+**Example:**
+```js
+// server.js
+
+import React from 'react'
+import ReactDOMServer from 'react-dom/server'
+import express from 'express'
+import Document from 'react-document'
+import app from  './app' // <-- the previously create react-chain application.
+
+const server = express()
+
+server.use('*', async function (req, res, next) {
+  const session = app.createSession()
+
+  let body = ''
+  let element
+
+  session.req = req
+  session.res = res
+
+  try {
+    element = await app.getElement(session)
+    
+    body = app.renderServer(session, () => {
+      return ReactDOMServer.renderToString(element)
+    })
+    
+    res.status(session.status || 200)
+  } catch (error) {
+    session.title = 'Internal Server Error'
+    
+    body = error.toString()
+    
+    next(error)
+  }
+
+  const html = '<!doctype html>' + ReactDOMServer.renderToStaticMarkup(
+    <Document {...session}>{body}</Document>
+  )
+
+  response.send(html)
+})
+
+server.listen(3000)
+```

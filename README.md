@@ -107,9 +107,7 @@ server.use('*', async function (req, res, next) {
   session.res = res
 
   try {
-    element = await app.getElement(session)
-    
-    body = app.renderServer(session, () => {
+    body = await app.renderServer(session, element => {
       return ReactDOMServer.renderToString(element)
     })
     

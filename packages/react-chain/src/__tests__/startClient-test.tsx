@@ -1,8 +1,8 @@
-import renderClient from '../startClient'
+import startClient from '../startClient'
 import createReactChain, { ReactChain } from '../ReactChain'
 import * as React from 'react'
 
-describe('renderClient()', () => {
+describe('startClient()', () => {
   let appRoot: Element
   let app: ReactChain
 
@@ -13,39 +13,25 @@ describe('renderClient()', () => {
   })
 
   it('should be callable', () => {
-    expect(typeof renderClient).toBe('function')
+    expect(typeof startClient).toBe('function')
   })
 
   it('should return a promise', () => {
-    const client = renderClient(app, appRoot)
+    const client = startClient(app, appRoot)
     expect(typeof client.then).toBe('function')
     expect(typeof client.catch).toBe('function')
   })
 
-  it('should await getElement before rendering', async () => {
-    const callOrder: string[] = []
-    app.getElement = jest.fn(() => callOrder.push('GET_ELEMENT'))
-    app.renderBrowser = jest.fn(() => callOrder.push('RENDER_BROWSER'))
-    await renderClient(app, appRoot)
-    expect(app.getElement).toHaveBeenCalled()
-    expect(app.renderBrowser).toHaveBeenCalled()
-    expect(callOrder).toEqual([
-      'GET_ELEMENT',
-      'RENDER_BROWSER',
-    ])
-  })
-
   it('should add a refresh function on the context', async () => {
-    let session = app.createSession()
-    app.getElement = jest.fn((internalSession) => { session = internalSession })
-    app.renderBrowser = jest.fn()
-    await renderClient(app, appRoot)
+    const session = app.createSession()
+    app.createSession = () => session
+    await startClient(app, appRoot)
     expect(typeof session.refresh).toBe('function')
   })
 
   it('should render a React component to the appRoot', async () => {
     app.chain((session) => () => <div>React Element</div>)
-    await renderClient(app, appRoot)
+    await startClient(app, appRoot)
     expect(appRoot.innerHTML).toMatchSnapshot()
   })
 
@@ -64,6 +50,6 @@ describe('renderClient()', () => {
       }
     })
 
-    renderClient(app, appRoot)
+    startClient(app, appRoot)
   })
 })

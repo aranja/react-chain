@@ -111,15 +111,23 @@ describe('ReactChain', () => {
       expect(typeof app.renderServer).toBe('function')
     })
 
-    it('should return the string returned from the callback', () => {
-      const body = app.renderServer(internalSession, () => 'foo')
-      expect(body).toBe('foo')
+    it('should pass the element to the render callback', async () => {
+      const html = await app.renderServer(internalSession, element => JSON.stringify(element))
+      expect(html).toMatchSnapshot()
     })
   })
 
   describe('.renderBrowser()', () => {
     it('should be callable', () => {
       expect(typeof app.renderBrowser).toBe('function')
+    })
+
+    it('should pass the element to the render callback', done => {
+      app.renderBrowser(internalSession, element => {
+        expect(element).toBeDefined()
+        expect(shallow(element).instance()).toBeInstanceOf(ReactChainProvider)
+        done()
+      })
     })
   })
 })

@@ -1,5 +1,5 @@
 import { render } from 'react-dom'
-import { ReactChain } from '../ReactChain'
+import { ReactChain } from './ReactChain'
 
 function startClient(chain: ReactChain, domNode: Element) {
   const session = chain.createSession()

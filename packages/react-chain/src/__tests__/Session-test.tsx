@@ -1,59 +1,72 @@
-import createSession, { InternalSessionT } from '../Session'
+import createSession, { SessionT } from '../Session'
 import * as React from 'react'
+import reactChainProvider from '../ReactChainProvider'
 import { render } from '../SessionUtils'
 
 describe('Session', () => {
-  let internalSession: InternalSessionT
+  let session: SessionT
 
   beforeEach(() => {
-    internalSession = createSession()
+    session = createSession()
   })
 
   it('should throw if render isn\'t a function', () => {
     expect(() => {
-      internalSession.on('browser')
+      session.on('browser')
     }).toThrowErrorMatchingSnapshot()
   })
 
   it('should throw for unknown targets', () => {
     expect(() => {
-      internalSession.on()
+      session.on()
     }).toThrowErrorMatchingSnapshot()
+  })
+
+  it('should have readonly properties', () => {
+    const props = ['__elementChain', '__browserChain', '__serverChain', 'on']
+    let initial: any
+    props.forEach(prop => {
+      initial = session[prop]
+      expect(initial).toBeDefined()
+      expect(() => {
+        session[prop] = 'fake'
+      }).toThrowErrorMatchingSnapshot()
+    })
   })
 
   it('unfolds correct middleware chain', () => {
     const browserCallOrder: string[] = []
     const serverCallOrder: string[] = []
 
-    internalSession.on('browser', render => {
+    session.on('browser', render => {
       browserCallOrder.push('BROWSER_RENDER_1')
       render()
       browserCallOrder.push('BROWSER_RENDER_1')
     })
 
-    internalSession.on('browser', render => {
+    session.on('browser', render => {
       browserCallOrder.push('BROWSER_RENDER_2')
       render()
       browserCallOrder.push('BROWSER_RENDER_2')
     })
 
-    internalSession.on('server', render => {
+    session.on('server', render => {
       serverCallOrder.push('SERVER_RENDER_1')
       render()
       serverCallOrder.push('SERVER_RENDER_1')
     })
 
-    internalSession.on('server', render => {
+    session.on('server', render => {
       serverCallOrder.push('SERVER_RENDER_2')
       render()
       serverCallOrder.push('SERVER_RENDER_2')
     })
 
-    render(internalSession, 'browser')(() => {
+    render(session, 'browser')(() => {
       browserCallOrder.push('ACTUAL_RENDER')
     })
 
-    render(internalSession, 'server')(() => {
+    render(session, 'server')(() => {
       serverCallOrder.push('ACTUAL_RENDER')
       return ''
     })
@@ -76,40 +89,34 @@ describe('Session', () => {
   })
 
   it('should throw if fails to call render', () => {
-    internalSession.on('browser', render => {
+    session.on('browser', render => {
       render()
     })
 
-    internalSession.on('browser', render => { })
+    session.on('browser', render => { })
 
     expect(() => {
-      render(internalSession, 'browser')()
+      render(session, 'browser')()
     }).toThrow()
   })
 
   it('can modify the exposed instance', () => {
-    const { exposed: session } = internalSession
-
-    if (!session) {
-      throw new Error()
-    }
-
-    internalSession.on('browser', render => {
+    session.on('browser', render => {
       session.someEdit = 'someEdit'
       render()
     })
 
-    internalSession.on('browser', render => {
+    session.on('browser', render => {
       session.someEdit += ' anotherEdit'
       render()
     })
 
-    render(internalSession, 'browser')()
+    render(session, 'browser')()
 
-    expect(internalSession.exposed).toHaveProperty('someEdit', 'someEdit anotherEdit')
+    expect(session).toHaveProperty('someEdit', 'someEdit anotherEdit')
   })
 
-  it('should keep track of current render chain', () => {
-    expect(internalSession).toHaveProperty('elementChain')
+  it('should have a render chain that starts with createReactChainProvider', () => {
+    expect(session).toHaveProperty('__elementChain', [reactChainProvider])
   })
 })

@@ -1,45 +1,33 @@
 import { WrapRender, RenderTarget, WrapElement } from './ReactChain'
 import { getChainForTarget } from './SessionUtils'
+import reactChainProvider from './ReactChainProvider'
 
-export type OnT =
-  (target?: RenderTarget, render?: WrapRender)
-    => void
-
-export type ExposedSessionT = any & {
-  on: OnT
+export interface SessionT {
+  readonly __browserChain: WrapRender[]
+  readonly __serverChain: WrapRender[]
+  readonly __elementChain: WrapElement[]
+  readonly on: (target?: RenderTarget, render?: WrapRender) => void
+  __firstRender: boolean
+  [key: string]: any
 }
 
-export interface InternalSessionT {
-  browserChain: Array<WrapRender>
-  serverChain: Array<WrapRender>
-  elementChain: Array<WrapElement>
-  firstRender: boolean
-  exposed?: ExposedSessionT
-  on: OnT
-}
+export default function(): SessionT {
+  const session = Object.create({}, {
+    __browserChain: { value: [] },
+    __serverChain: { value: [] },
+    __elementChain: { value: [reactChainProvider] },
+    __firstRender: { value: true, writable: true },
+  })
 
-export default function() {
-  const session: InternalSessionT = {
-    browserChain: [],
-    serverChain: [],
-    elementChain: [],
-    firstRender: true,
-    on() {}
-  }
+  return Object.defineProperty(session, 'on', {
+    value(target?: RenderTarget, render?: WrapRender) {
+      const chain = getChainForTarget(session, target)
 
-  session.on = function(target?: RenderTarget, render?: WrapRender) {
-    const chain = getChainForTarget(session, target)
+      if (typeof render !== 'function') {
+        throw new Error('session.on: render should be a function.')
+      }
 
-    if (typeof render !== 'function') {
-      throw new Error('session.on: render should be a function.')
-    }
-
-    chain.push(render)
-  }
-
-  session.exposed = {
-    on: session.on,
-  }
-
-  return session
+      chain.push(render)
+    },
+  })
 }

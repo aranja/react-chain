@@ -1,9 +1,9 @@
 import * as React from 'react'
-import { ExposedSessionT } from './Session'
+import { SessionT } from './Session'
 
 export type Props = {
-  context: ExposedSessionT,
-  nextContext?: ExposedSessionT,
+  context: SessionT,
+  nextContext?: SessionT,
   children?: any,
 }
 
@@ -27,7 +27,7 @@ export class ReactChainProvider extends React.Component<Props, any> {
 }
 
 
-export default async function createBase(next: RenderChildren, context: ExposedSessionT) {
+export default async function createBase(next: RenderChildren, context: SessionT) {
   const element = next && await next()
   return React.createElement(ReactChainProvider, { context }, element)
 }

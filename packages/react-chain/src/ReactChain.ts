@@ -1,5 +1,4 @@
-import reactChainProvider from './ReactChainProvider'
-import createSession, { ExposedSessionT, InternalSessionT } from './Session'
+import createSession, { SessionT } from './Session'
 import { ReactElement } from 'react'
 import { render } from './SessionUtils'
 import reactChainInitMiddleware from './ReactChainInit'
@@ -17,7 +16,7 @@ export type WrapRender =
     void
 
 export type Middleware =
-  (session: ExposedSessionT) =>
+  (session: SessionT) =>
     (void | WrapElement)
 
 export class ReactChain {
@@ -35,39 +34,38 @@ export class ReactChain {
 
   createSession = createSession
 
-  async getElement(session?: InternalSessionT): Promise<any> {
+  async getElement(session?: SessionT): Promise<any> {
     if (session == null) {
       throw new Error('Missing session object.')
     }
 
-    if (session.firstRender) {
-      session.elementChain = [reactChainProvider]
+    if (session.__firstRender) {
       this.middlewareChain.forEach(middleware => {
-        const createElement = middleware(session.exposed)
+        const createElement = middleware(session)
         if (createElement) {
-          session.elementChain.push(createElement)
+          session.__elementChain.push(createElement)
         }
       })
-      session.firstRender = false
+      session.__firstRender = false
     }
 
     let index = 0
     const next = (): Promise<any> => {
-      const createElement = session.elementChain[index++]
-      const renderChildren = session.elementChain[index]
+      const createElement = session.__elementChain[index++]
+      const renderChildren = session.__elementChain[index]
         ? next
         : () => Promise.resolve(null)
-      return Promise.resolve(createElement(renderChildren, session.exposed))
+      return Promise.resolve(createElement(renderChildren, session))
     }
 
     return await next()
   }
 
-  renderBrowser(session: InternalSessionT, onRender: () => void) {
+  renderBrowser(session: SessionT, onRender: () => void) {
     render(session, 'browser')(onRender)
   }
 
-  renderServer(session: InternalSessionT, onRender: Function) {
+  renderServer(session: SessionT, onRender: Function) {
     let body = ''
     render(session, 'server')(() => {
       body = onRender()

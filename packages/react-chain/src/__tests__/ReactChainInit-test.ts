@@ -1,4 +1,5 @@
 import middleware from '../ReactChainInit'
+import createSession from '../Session'
 
 describe('ReactChainInit', () => {
   it('should be a function', () => {
@@ -6,7 +7,7 @@ describe('ReactChainInit', () => {
   })
 
   it('should add `htmlProps`, `headProps` and `window` properties as objects', () => {
-    const fakeSession = {}
+    const fakeSession = createSession()
     middleware(fakeSession)
     expect(fakeSession).toHaveProperty('htmlProps')
     expect(fakeSession).toHaveProperty('headProps')

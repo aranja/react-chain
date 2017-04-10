@@ -1,5 +1,5 @@
 import createReactChain, { ReactChain } from '../ReactChain'
-import createSession, { InternalSessionT } from '../Session'
+import createSession, { SessionT } from '../Session'
 import * as React from 'react'
 import { shallow } from 'enzyme'
 import { ReactChainProvider } from '../ReactChainProvider'
@@ -7,7 +7,7 @@ import reactChainInitMiddleware from '../ReactChainInit'
 
 describe('ReactChain', () => {
   let app: ReactChain
-  let internalSession: InternalSessionT
+  let internalSession: SessionT
 
   beforeEach(() => {
     app = createReactChain()
@@ -33,6 +33,11 @@ describe('ReactChain', () => {
       expect(app.chain(() => { })).toBe(app)
     })
 
+    it('should initialize the chain with ReactChainInit', async () => {
+      expect(app.middlewareChain.length).toBe(1)
+      expect(app.middlewareChain[0]).toBe(reactChainInitMiddleware)
+    })
+
     it('should have mutable props', async () => {
       app.chain(session => {
         session.someEdit = 'someEdit'
@@ -44,7 +49,7 @@ describe('ReactChain', () => {
 
       await app.getElement(internalSession)
 
-      expect(internalSession.exposed).toHaveProperty('someEdit', 'someEdit anotherEdit')
+      expect(internalSession).toHaveProperty('someEdit', 'someEdit anotherEdit')
     })
 
     it('should always be possible to await next, even at the end of the chain', async () => {
@@ -57,11 +62,6 @@ describe('ReactChain', () => {
       const wrapper = shallow(element)
 
       expect(wrapper.html()).toBe('<div class="wrap"></div>')
-    })
-
-    it('should initialize the chain with ReactChainInit', async () => {
-      expect(app.middlewareChain.length).toBe(1)
-      expect(app.middlewareChain[0]).toBe(reactChainInitMiddleware)
     })
   })
 
@@ -100,8 +100,8 @@ describe('ReactChain', () => {
       await app.getElement(internalSession)
 
       expect(actual).toEqual([
-        internalSession.exposed,
-        internalSession.exposed,
+        internalSession,
+        internalSession,
       ])
     })
   })

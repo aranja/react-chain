@@ -1,4 +1,4 @@
-# <img src="/images/react chain logo.png" width="50%">
+<img src="/images/react chain logo.png" width="50%">
 
 > A middleware based pipeline for rendering React applications, both server- and client side.
 

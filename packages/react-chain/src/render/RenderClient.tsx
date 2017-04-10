@@ -13,7 +13,7 @@ function startClient(chain: ReactChain, domNode: Element) {
     })
   }
 
-  session.exposed.refresh = refresh
+  session.refresh = refresh
 
   return refresh()
 }

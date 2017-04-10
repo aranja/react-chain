@@ -1,5 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Session should have readonly properties 1`] = `"Cannot assign to read only property '__elementChain' of object '#<Object>'"`;
+
+exports[`Session should have readonly properties 2`] = `"Cannot assign to read only property '__browserChain' of object '#<Object>'"`;
+
+exports[`Session should have readonly properties 3`] = `"Cannot assign to read only property '__serverChain' of object '#<Object>'"`;
+
+exports[`Session should have readonly properties 4`] = `"Cannot assign to read only property 'on' of object '#<Object>'"`;
+
 exports[`Session should throw for unknown targets 1`] = `"'undefined' is not a valid render target. A render target can either be 'browser' or 'server'."`;
 
 exports[`Session should throw if render isn't a function 1`] = `"session.on: render should be a function."`;

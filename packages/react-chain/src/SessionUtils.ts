@@ -1,15 +1,15 @@
 import { WrapRender, RenderTarget } from './ReactChain'
-import { InternalSessionT } from './Session'
+import { SessionT } from './Session'
 
 export function getChainForTarget(
-  session: InternalSessionT,
+  session: SessionT,
   target?: RenderTarget,
 ) {
   switch (target) {
     case 'browser':
-      return session.browserChain
+      return session.__browserChain
     case 'server':
-      return session.serverChain
+      return session.__serverChain
     default:
       throw new Error(
         `'${target}' is not a valid render target. ` +
@@ -48,7 +48,7 @@ export function renderRecursively(wrappers: WrapRender[], onComplete: Function) 
   }
 }
 
-export function render(session: InternalSessionT, target: RenderTarget) {
+export function render(session: SessionT, target: RenderTarget) {
   const chain = getChainForTarget(session, target)
   return (onComplete = () => {}) => renderRecursively(chain, onComplete)
 }

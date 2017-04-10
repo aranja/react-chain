@@ -1,6 +1,5 @@
-import renderClient from '../RenderClient'
-import createReactChain from '../../ReactChain'
-import { ReactChain } from '../../ReactChain'
+import renderClient from '../startClient'
+import createReactChain, { ReactChain } from '../ReactChain'
 import * as React from 'react'
 
 describe('renderClient()', () => {

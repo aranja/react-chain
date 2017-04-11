@@ -1,6 +1,6 @@
 # react-chain-history
 
-A [react-chain](../../react-chain) middlware for [history](https://github.com/reacttraining/history).
+A [react-chain](https://github.com/aranja/react-chain) middlware for [history](https://github.com/reacttraining/history).
 
 ## Usage
 

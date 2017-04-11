@@ -1,6 +1,6 @@
 {
   "name": "react-chain",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A chain of pluggable logic for your React rendering pipline.",
   "repository": "git@github.com:aranja/react-chain.git",
   "author": "Aranja",

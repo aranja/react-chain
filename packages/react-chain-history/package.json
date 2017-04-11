@@ -1,6 +1,6 @@
 {
   "name": "react-chain-history",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A react-chain middleware for history",
   "main": "lib/ReactChainHistory.js",
   "repository": {

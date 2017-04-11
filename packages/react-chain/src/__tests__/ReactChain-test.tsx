@@ -73,6 +73,26 @@ describe('ReactChain', () => {
       })
     })
 
+    it('should throw when a middleware returns a ReactElement', async () => {
+      app.chain(() => 'test' as any)
+
+      try {
+        await app.getElement(internalSession)
+      } catch (error) {
+        expect(error).toMatchSnapshot()
+      }
+    })
+
+    it('should throw when a middleware returns a wrong type', async () => {
+      app.chain(() => <div /> as any)
+
+      try {
+        await app.getElement(internalSession)
+      } catch (error) {
+        expect(error).toMatchSnapshot()
+      }
+    })
+
     it('should wrap with ReactChainProvider', async () => {
       const element = await app.getElement(internalSession)
       const wrapper = shallow(element)

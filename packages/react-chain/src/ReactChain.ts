@@ -1,5 +1,5 @@
 import createSession, { SessionT } from './Session'
-import { ReactElement } from 'react'
+import { ReactElement, isValidElement } from 'react'
 import { render } from './SessionUtils'
 import reactChainInitMiddleware from './ReactChainInit'
 
@@ -43,7 +43,18 @@ export class ReactChain {
       this.middlewareChain.forEach(middleware => {
         const createElement = middleware(session)
         if (createElement) {
-          session.__elementChain.push(createElement)
+          const returnType = isValidElement(createElement)
+            ? 'ReactElement'
+            : typeof createElement
+
+          if (returnType !== 'function') {
+            throw new Error(
+              `.chain(): A session wrap can return a 'next' ` +
+              `function or void, instead returns '${returnType}'.`
+            )
+          }
+
+          session.__elementChain.push(createElement as WrapElement)
         }
       })
       session.__firstRender = false

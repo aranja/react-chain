@@ -1,6 +1,6 @@
 # react-chain-helmet
 
-A [react-chain](../../react-chain) middlware that adds [React Helmet's](https://github.com/nfl/react-helmet) rewind logic to server rendering.
+A [react-chain](https://github.com/aranja/react-chain) middlware that adds [React Helmet's](https://github.com/nfl/react-helmet) rewind logic to server rendering.
 
 ## Usage
 

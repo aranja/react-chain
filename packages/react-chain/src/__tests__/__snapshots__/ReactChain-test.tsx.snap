@@ -4,4 +4,8 @@ exports[`ReactChain .chain() should throw if a middleware isn't a function 1`] =
 
 exports[`ReactChain .getElement() should throw if session is undefined 1`] = `"Missing session object."`;
 
+exports[`ReactChain .getElement() should throw when a middleware returns a ReactElement 1`] = `[Error: .chain(): A session wrap can return a 'next' function or void, instead returns 'string'.]`;
+
+exports[`ReactChain .getElement() should throw when a middleware returns a wrong type 1`] = `[Error: .chain(): A session wrap can return a 'next' function or void, instead returns 'ReactElement'.]`;
+
 exports[`ReactChain .renderServer() should pass the element to the render callback 1`] = `"{\\"key\\":null,\\"ref\\":null,\\"props\\":{\\"context\\":{\\"htmlProps\\":{},\\"headProps\\":{},\\"window\\":{}},\\"children\\":null},\\"_owner\\":null,\\"_store\\":{}}"`;

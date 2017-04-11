@@ -22,7 +22,7 @@ import React from 'react'
 import createReactChain from 'react-chain'
 
 export default createReactChain()
-  .chain(() => <div>Hello ReactChain!</div>)
+  .chain(session => () => <div>Hello ReactChain!</div>)
 ```
 
 `createReactChain()` will instantiate a new ReactChain instance that can be used to link middleware and perform render on. The example above creates a very simple middleware chain that ends with a middleware that renders a `div`, containing the string `Hello ReactChain!`. Note that the resulting React element returned from a render is wrapped with an instance of `ReactChainProvider`, which gives us access to custom logic which we see later.
@@ -97,34 +97,21 @@ import app from  './app' // <-- the previously create react-chain application.
 
 const server = express()
 
-server.use('*', async function (req, res, next) {
+server.use('*', async (req, res, next) => {
   const session = app.createSession()
-
-  let body = ''
-  let element
 
   session.req = req
   session.res = res
 
   try {
-    body = await app.renderServer(session, element => {
-      return ReactDOMServer.renderToString(element)
-    })
-    
+    const body = await app.renderServer(session, ReactDOMServer.renderToString)
     res.status(session.status || 200)
+    res.send('<!doctype html>' + ReactDOMServer.renderToStaticMarkup(
+      <Document {...session}>{body}</Document>
+    ))
   } catch (error) {
-    session.title = 'Internal Server Error'
-    
-    body = error.toString()
-    
     next(error)
   }
-
-  const html = '<!doctype html>' + ReactDOMServer.renderToStaticMarkup(
-    <Document {...session}>{body}</Document>
-  )
-
-  response.send(html)
 })
 
 server.listen(3000)

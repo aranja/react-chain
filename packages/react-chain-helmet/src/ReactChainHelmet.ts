@@ -1,9 +1,10 @@
 import Helmet from 'react-helmet'
+import { Middleware } from 'react-chain/lib/ReactChain'
 
-const helmet = () => (session: any) => {
+const helmet = (): Middleware => session => {
   session.on('server', (render: Function) => {
     render()
-    session.headProps.helmet = Helmet.rewind()
+    session.helmet = Helmet.rewind()
   })
 }
 

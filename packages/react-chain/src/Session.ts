@@ -1,15 +1,26 @@
 import { WrapRender, RenderTarget, WrapElement } from './ReactChain'
 import { getChainForTarget } from './SessionUtils'
 import reactChainProvider from './ReactChainProvider'
+import { ReactElement } from 'react'
 
-export interface SessionT {
+export type ExcessT = Partial<{
+  [key: string]: any
+}>
+
+export type SessionT = {
   readonly __browserChain: WrapRender[]
   readonly __serverChain: WrapRender[]
   readonly __elementChain: WrapElement[]
   readonly on: (target?: RenderTarget, render?: WrapRender) => void
   __firstRender: boolean
-  [key: string]: any
-}
+  htmlProps: { [key: string]: string }
+  bodyProps: { [key: string]: string }
+  window: { [key: string]: any }
+  head: ReactElement<any>[]
+  footer: ReactElement<any>[]
+  css: string[]
+  js: string[]
+} & ExcessT
 
 export default function(): SessionT {
   const session = Object.create({}, {

@@ -8,4 +8,4 @@ exports[`ReactChain .getElement() should throw when a middleware returns a React
 
 exports[`ReactChain .getElement() should throw when a middleware returns a wrong type 1`] = `[Error: .chain(): A session wrap can return a 'next' function or void, instead returns 'ReactElement'.]`;
 
-exports[`ReactChain .renderServer() should pass the element to the render callback 1`] = `"{\\"key\\":null,\\"ref\\":null,\\"props\\":{\\"context\\":{\\"htmlProps\\":{},\\"headProps\\":{},\\"window\\":{}},\\"children\\":null},\\"_owner\\":null,\\"_store\\":{}}"`;
+exports[`ReactChain .renderServer() should pass the element to the render callback 1`] = `"{\\"key\\":null,\\"ref\\":null,\\"props\\":{\\"context\\":{\\"htmlProps\\":{},\\"bodyProps\\":{},\\"window\\":{},\\"head\\":[],\\"footer\\":[],\\"css\\":[],\\"js\\":[]},\\"children\\":null},\\"_owner\\":null,\\"_store\\":{}}"`;

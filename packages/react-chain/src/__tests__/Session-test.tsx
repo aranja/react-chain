@@ -1,7 +1,7 @@
-import createSession, { SessionT } from '../Session'
-import reactChainProvider from '../ReactChainProvider'
-import { render } from '../SessionUtils'
 import 'react'
+import createSession from '../Session'
+import { render } from '../SessionUtils'
+import { SessionT } from '../types'
 
 describe('Session', () => {
   let session: SessionT
@@ -118,9 +118,5 @@ describe('Session', () => {
     render(fakeSession, 'browser')()
 
     expect(fakeSession).toHaveProperty('someEdit', 'someEdit anotherEdit')
-  })
-
-  it('should have a render chain that starts with createReactChainProvider', () => {
-    expect(session).toHaveProperty('__elementChain', [reactChainProvider])
   })
 })

@@ -1,9 +1,10 @@
-import createReactChain, { ReactChain } from '../ReactChain'
-import createSession, { SessionT } from '../Session'
 import * as React from 'react'
+import createReactChain, { ReactChain } from '../ReactChain'
+import createSession from '../Session'
 import { shallow } from 'enzyme'
 import { ReactChainProvider } from '../ReactChainProvider'
 import reactChainInitMiddleware from '../ReactChainInit'
+import { SessionT } from '../types'
 
 describe('ReactChain', () => {
   let app: ReactChain

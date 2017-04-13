@@ -2,12 +2,12 @@ import * as React from 'react'
 import createBrowserHistory from 'history/createBrowserHistory'
 import createMemoryHistory from 'history/createMemoryHistory'
 import HistoryProvider from './HistoryProvider'
-import { SessionT } from 'react-chain/lib/Session'
 import { History } from 'history'
+import { CreateElementT, SessionT } from 'react-chain/lib/types'
 
 export default () => (session: SessionT & {
   history: History
-}) => {
+}): CreateElementT => {
   if (session.req) {
     session.history = createMemoryHistory()
   } else {
@@ -19,7 +19,7 @@ export default () => (session: SessionT & {
     })
   }
 
-  return async (next: () => any) => {
+  return async next => {
     const children = await next()
     return (
       <HistoryProvider history={session.history}>

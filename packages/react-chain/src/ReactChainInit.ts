@@ -1,6 +1,6 @@
-import { Middleware } from './ReactChain'
+import { MiddlewareT } from './types'
 
-const reactChainInitMiddleware: Middleware = session => {
+const reactChainInitMiddleware: MiddlewareT = session => {
   Object.defineProperties(session, {
     htmlProps: { enumerable: true, writable: true, value: {} },
     bodyProps: { enumerable: true, writable: true, value: {} },

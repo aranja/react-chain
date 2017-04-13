@@ -1,9 +1,8 @@
-import { WrapRender, RenderTarget } from './ReactChain'
-import { SessionT } from './Session'
+import { RenderTargetT, SessionT, WrapRenderCallT } from './types'
 
 export function getChainForTarget(
   session: SessionT,
-  target?: RenderTarget,
+  target?: RenderTargetT,
 ) {
   switch (target) {
     case 'browser':
@@ -18,7 +17,7 @@ export function getChainForTarget(
   }
 }
 
-export function renderRecursively(wrappers: WrapRender[], onComplete: Function) {
+export function renderRecursively(wrappers: WrapRenderCallT[], onComplete: Function) {
   let index = 0
 
   if (wrappers.length === 0) {
@@ -48,7 +47,7 @@ export function renderRecursively(wrappers: WrapRender[], onComplete: Function) 
   }
 }
 
-export function render(session: SessionT, target: RenderTarget) {
+export function render(session: SessionT, target: RenderTargetT) {
   const chain = getChainForTarget(session, target)
   return (onComplete = () => {}) => renderRecursively(chain, onComplete)
 }

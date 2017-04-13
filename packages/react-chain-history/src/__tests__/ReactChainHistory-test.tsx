@@ -2,7 +2,7 @@ import chainHistory from '../ReactChainHistory'
 import HistoryProvider from '../HistoryProvider'
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import { WrapElement } from '../../../react-chain/src/ReactChain'
+import { CreateElementT } from 'react-chain/lib/types'
 
 describe('react-chain-history', () => {
   it('should be a function', () => {
@@ -12,7 +12,7 @@ describe('react-chain-history', () => {
   it('should wrap an element in the HistoryProvider', async () => {
     const history = chainHistory()
     const refresh = jest.fn()
-    const element = await history({ refresh } as any)(() => <div />)
+    const element = await history({ refresh } as any)(async () => <div />)
 
     expect(shallow(element).instance()).toBeInstanceOf(HistoryProvider)
   })
@@ -23,13 +23,13 @@ describe('react-chain-history', () => {
       refresh: jest.fn(),
     }
 
-    await history(session as any)(() => <div />)
+    await history(session as any)(async () => <div />)
 
     expect(session).toHaveProperty('history')
   })
 
   describe('browser', () => {
-    const render = () => (<div />)
+    const render = async () => (<div />)
     let history = chainHistory()
     let session: any
 
@@ -51,7 +51,7 @@ describe('react-chain-history', () => {
   })
 
   describe('server', () => {
-    const render = () => <div />
+    const render = async () => <div />
     let session: any
 
     beforeEach(() => {

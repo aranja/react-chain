@@ -1,36 +1,16 @@
-import { WrapRender, RenderTarget, WrapElement } from './ReactChain'
 import { getChainForTarget } from './SessionUtils'
-import reactChainProvider from './ReactChainProvider'
-import { ReactElement } from 'react'
-
-export interface SessionT {
-  readonly __browserChain: WrapRender[]
-  readonly __serverChain: WrapRender[]
-  readonly __elementChain: WrapElement[]
-  readonly on: (target?: RenderTarget, render?: WrapRender) => void
-  __firstRender: boolean
-  htmlProps: { [key: string]: string }
-  bodyProps: { [key: string]: string }
-  window: { [key: string]: any }
-  head: ReactElement<any>[]
-  footer: ReactElement<any>[]
-  css: string[]
-  js: string[]
-  refresh?: Function
-  req?: any
-  res?: any
-}
+import { RenderTargetT, SessionT, WrapRenderCallT } from './types'
 
 export default function(): SessionT {
   const session = Object.create({}, {
     __browserChain: { value: [] },
     __serverChain: { value: [] },
-    __elementChain: { value: [reactChainProvider] },
+    __elementChain: { value: [] },
     __firstRender: { value: true, writable: true },
   })
 
   return Object.defineProperty(session, 'on', {
-    value(target?: RenderTarget, render?: WrapRender) {
+    value(target?: RenderTargetT, render?: WrapRenderCallT) {
       const chain = getChainForTarget(session, target)
 
       if (typeof render !== 'function') {

@@ -1,28 +1,18 @@
-import createSession, { SessionT } from './Session'
+import createSession from './Session'
 import { ReactElement, isValidElement } from 'react'
 import { render } from './SessionUtils'
+import provide from './ReactChainProvider'
 import reactChainInitMiddleware from './ReactChainInit'
+import { AwaitNextT, MiddlewareT, SessionT } from './types'
 
-export type RenderTarget =
-  'browser' |
-  'server'
-
-export type WrapElement =
-  (renderChildren: () => Promise<null | ReactElement<any>>, context: any) =>
-    ReactElement<any> | Promise<ReactElement<any>>
-
-export type WrapRender =
-  (render: Function) =>
-    void
-
-export type Middleware =
-  (session: SessionT) =>
-    (void | WrapElement)
+const nullNext = () => {
+  return Promise.resolve(null)
+}
 
 export class ReactChain {
-  middlewareChain: Array<Middleware> = [reactChainInitMiddleware]
+  middlewareChain: Array<MiddlewareT> = [reactChainInitMiddleware]
 
-  chain(middleware?: Middleware) {
+  chain(middleware?: MiddlewareT) {
     if (typeof middleware !== 'function') {
       throw new Error('A react-chain middleware should be a function')
     }
@@ -50,26 +40,27 @@ export class ReactChain {
           if (returnType !== 'function') {
             throw new Error(
               `.chain(): A session wrap can return a 'next' ` +
-              `function or void, instead returns '${returnType}'.`
+              `function or void, instead returns '${returnType}'.`,
             )
           }
 
-          session.__elementChain.push(createElement as WrapElement)
+          session.__elementChain.push(createElement)
         }
       })
+
       session.__firstRender = false
     }
 
-    let index = 0
-    const next = (): Promise<any> => {
-      const createElement = session.__elementChain[index++]
-      const renderChildren = session.__elementChain[index]
-        ? next
-        : () => Promise.resolve(null)
-      return Promise.resolve(createElement(renderChildren, session))
+    const next = (index = 0): AwaitNextT => () => {
+      const createElement = session.__elementChain[index] || nullNext
+      return Promise.resolve(createElement(
+        session.__elementChain[index]
+          ? next(index + 1)
+          : nullNext
+      ))
     }
 
-    return await next()
+    return await provide(next(), session)
   }
 
   async renderBrowser(session: SessionT, onRender: (element: ReactElement<any>) => void) {

@@ -1,21 +1,12 @@
 import * as React from 'react'
-import { SessionT } from './Session'
+import { AwaitNextT, SessionT } from './types'
 
-export type Props = {
+export class ReactChainProvider extends React.Component<{
   context: SessionT,
   nextContext?: SessionT,
   children?: any,
-}
-
-export type RenderChildren =
-  null | (() => Promise<React.ReactElement<any>>)
-
-export class ReactChainProvider extends React.Component<Props, any> {
-  static childContextTypes = {
-    htmlProps: React.PropTypes.object.isRequired,
-    headProps: React.PropTypes.object.isRequired,
-    window: React.PropTypes.object.isRequired,
-  }
+}, any> {
+  static childContextTypes = {}
 
   getChildContext() {
     return this.props.nextContext
@@ -26,7 +17,7 @@ export class ReactChainProvider extends React.Component<Props, any> {
   }
 }
 
-export default async function createBase(next: RenderChildren, context: SessionT) {
-  const element = next && await next()
+export default async function createBase(next: AwaitNextT, context: SessionT) {
+  const element = await next()
   return React.createElement(ReactChainProvider, { context }, element)
 }

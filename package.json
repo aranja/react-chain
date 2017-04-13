@@ -46,6 +46,9 @@
       "!**/__mocks__/**",
       "!**/__tests__/**"
     ],
+    "coverageReporters": [
+      "json"
+    ],
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },

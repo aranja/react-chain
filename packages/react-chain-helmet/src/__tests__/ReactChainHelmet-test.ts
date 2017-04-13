@@ -12,7 +12,7 @@ describe('react-chain-helmet', () => {
     expect(typeof session).toBe('function')
   })
 
-  it('should call render and modify the context on server render', done => {
+  it('should call unfoldRender and modify the context on server unfoldRender', done => {
     const next = jest.fn()
     const on = jest.fn((_, render) => {
       render(next)

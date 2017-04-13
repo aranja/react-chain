@@ -78,7 +78,7 @@ export function renderRecursively(wrappers: WrapRenderCallT[], onComplete: Funct
   }
 }
 
-export function render(session: SessionT, target: RenderTargetT) {
+export function unfoldRender(session: SessionT, target: RenderTargetT, onComplete = () => {}) {
   const chain = getChainForTarget(session, target)
-  return (onComplete = () => {}) => renderRecursively(chain, onComplete)
+  renderRecursively(chain, onComplete)
 }

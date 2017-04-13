@@ -1,6 +1,6 @@
 import 'react'
 import createSession from '../Session'
-import { render } from '../utils'
+import { unfoldRender } from '../utils'
 import { SessionT } from '../types'
 
 describe('Session', () => {
@@ -63,11 +63,11 @@ describe('Session', () => {
       serverCallOrder.push('SERVER_RENDER_2')
     })
 
-    render(session, 'browser')(() => {
+    unfoldRender(session, 'browser', () => {
       browserCallOrder.push('ACTUAL_RENDER')
     })
 
-    render(session, 'server')(() => {
+    unfoldRender(session, 'server', () => {
       serverCallOrder.push('ACTUAL_RENDER')
       return ''
     })
@@ -89,7 +89,7 @@ describe('Session', () => {
     ])
   })
 
-  it('should throw if fails to call render', () => {
+  it('should throw if fails to call render callback', () => {
     session.on('browser', render => {
       render()
     })
@@ -97,7 +97,7 @@ describe('Session', () => {
     session.on('browser', render => { })
 
     expect(() => {
-      render(session, 'browser')()
+      unfoldRender(session, 'browser')
     }).toThrow()
   })
 
@@ -115,7 +115,7 @@ describe('Session', () => {
       render()
     })
 
-    render(fakeSession, 'browser')()
+    unfoldRender(fakeSession, 'browser')
 
     expect(fakeSession).toHaveProperty('someEdit', 'someEdit anotherEdit')
   })

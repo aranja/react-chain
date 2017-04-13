@@ -1,6 +1,6 @@
 import createSession from './Session'
 import { ReactElement } from 'react'
-import { validateElementCreator, render, renderElementChain } from './utils'
+import { validateElementCreator, unfoldRender, renderElementChain } from './utils'
 import provide from './ReactChainProvider'
 import reactChainInitMiddleware from './ReactChainInit'
 import { MiddlewareT, SessionT, CreateElementT } from './types'
@@ -41,7 +41,7 @@ export class ReactChain {
 
   async renderBrowser(session: SessionT, onRender: (element: ReactElement<any>) => void) {
     const element = await this.getElement(session)
-    render(session, 'browser')(() => {
+    unfoldRender(session, 'browser', () => {
       onRender(element)
     })
   }
@@ -49,7 +49,7 @@ export class ReactChain {
   async renderServer(session: SessionT, onRender: (element: ReactElement<any>) => string) {
     const element = await this.getElement(session)
     let body = ''
-    render(session, 'server')(() => {
+    unfoldRender(session, 'server', () => {
       body = onRender(element)
     })
     return body

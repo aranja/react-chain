@@ -5,7 +5,7 @@ export type RenderTargetT =
   'server'
 
 export type AwaitNextT =
-  () => Promise<null | ReactElement<any>>
+  () => null | Promise<ReactElement<any>>
 
 export type CreateElementT =
   (next: AwaitNextT) =>

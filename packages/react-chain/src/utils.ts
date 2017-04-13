@@ -1,4 +1,5 @@
-import { RenderTargetT, SessionT, WrapRenderCallT } from './types'
+import { AwaitNextT, CreateElementT, RenderTargetT, SessionT, WrapRenderCallT } from './types'
+import { isValidElement } from 'react'
 
 export function getChainForTarget(
   session: SessionT,
@@ -15,6 +16,36 @@ export function getChainForTarget(
         `A render target can either be 'browser' or 'server'.`
       )
   }
+}
+
+export function renderElementChain(creators: CreateElementT[]) {
+  let index = 0
+  const next: AwaitNextT = () => {
+    const createElement = creators[index++] || null
+    return createElement && Promise.resolve(createElement(
+      creators[index] ? next : () => null
+    ))
+  }
+  return next
+}
+
+export function validateElementCreator(createElement?: any): void | CreateElementT {
+  if (createElement == null) {
+    return
+  }
+
+  const returnType = isValidElement(createElement)
+    ? 'ReactElement'
+    : typeof createElement
+
+  if (returnType !== 'function') {
+    throw new Error(
+      `.chain(): A session wrap can return a 'next' ` +
+      `function or void, instead returns '${returnType}'.`,
+    )
+  }
+
+  return createElement
 }
 
 export function renderRecursively(wrappers: WrapRenderCallT[], onComplete: Function) {

@@ -1,4 +1,4 @@
-import { getChainForTarget } from './SessionUtils'
+import { getChainForTarget } from './utils'
 import { RenderTargetT, SessionT, WrapRenderCallT } from './types'
 
 export default function(): SessionT {

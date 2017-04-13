@@ -1,13 +1,9 @@
 import createSession from './Session'
-import { ReactElement, isValidElement } from 'react'
-import { render } from './SessionUtils'
+import { ReactElement } from 'react'
+import { validateElementCreator, render, renderElementChain } from './utils'
 import provide from './ReactChainProvider'
 import reactChainInitMiddleware from './ReactChainInit'
-import { AwaitNextT, MiddlewareT, SessionT } from './types'
-
-const nullNext = () => {
-  return Promise.resolve(null)
-}
+import { MiddlewareT, SessionT, CreateElementT } from './types'
 
 export class ReactChain {
   middlewareChain: Array<MiddlewareT> = [reactChainInitMiddleware]
@@ -31,19 +27,8 @@ export class ReactChain {
 
     if (session.__firstRender) {
       this.middlewareChain.forEach(middleware => {
-        const createElement = middleware(session)
-        if (createElement) {
-          const returnType = isValidElement(createElement)
-            ? 'ReactElement'
-            : typeof createElement
-
-          if (returnType !== 'function') {
-            throw new Error(
-              `.chain(): A session wrap can return a 'next' ` +
-              `function or void, instead returns '${returnType}'.`,
-            )
-          }
-
+        let createElement: void | CreateElementT
+        if ((createElement = validateElementCreator(middleware(session)))) {
           session.__elementChain.push(createElement)
         }
       })
@@ -51,16 +36,7 @@ export class ReactChain {
       session.__firstRender = false
     }
 
-    const next = (index = 0): AwaitNextT => () => {
-      const createElement = session.__elementChain[index] || nullNext
-      return Promise.resolve(createElement(
-        session.__elementChain[index]
-          ? next(index + 1)
-          : nullNext
-      ))
-    }
-
-    return await provide(next(), session)
+    return await provide(renderElementChain(session.__elementChain), session)
   }
 
   async renderBrowser(session: SessionT, onRender: (element: ReactElement<any>) => void) {

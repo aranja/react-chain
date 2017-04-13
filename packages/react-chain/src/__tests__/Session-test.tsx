@@ -1,6 +1,6 @@
 import 'react'
 import createSession from '../Session'
-import { render } from '../SessionUtils'
+import { render } from '../utils'
 import { SessionT } from '../types'
 
 describe('Session', () => {

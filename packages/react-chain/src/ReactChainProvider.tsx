@@ -18,6 +18,8 @@ export class ReactChainProvider extends React.Component<{
 }
 
 export default async function createBase(next: AwaitNextT, context: SessionT) {
-  const element = await next()
-  return React.createElement(ReactChainProvider, { context }, element)
+  return React.createElement(ReactChainProvider, { context }, typeof next === 'function'
+    ? await next()
+    : null
+  )
 }

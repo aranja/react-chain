@@ -26,7 +26,6 @@ export class ReactChainProvider extends React.Component<Props, any> {
   }
 }
 
-
 export default async function createBase(next: RenderChildren, context: SessionT) {
   const element = next && await next()
   return React.createElement(ReactChainProvider, { context }, element)

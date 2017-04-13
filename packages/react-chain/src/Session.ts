@@ -3,11 +3,7 @@ import { getChainForTarget } from './SessionUtils'
 import reactChainProvider from './ReactChainProvider'
 import { ReactElement } from 'react'
 
-export type ExcessT = Partial<{
-  [key: string]: any
-}>
-
-export type SessionT = {
+export interface SessionT {
   readonly __browserChain: WrapRender[]
   readonly __serverChain: WrapRender[]
   readonly __elementChain: WrapElement[]
@@ -20,7 +16,10 @@ export type SessionT = {
   footer: ReactElement<any>[]
   css: string[]
   js: string[]
-} & ExcessT
+  refresh?: Function
+  req?: any
+  res?: any
+}
 
 export default function(): SessionT {
   const session = Object.create({}, {

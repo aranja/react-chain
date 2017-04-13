@@ -1,7 +1,7 @@
 const reactHelmet = jest.genMockFromModule('react-helmet')
 
-reactHelmet.rewind = function () {
-  return true
+reactHelmet.renderStatic = function () {
+  return {}
 }
 
 module.exports.default = reactHelmet

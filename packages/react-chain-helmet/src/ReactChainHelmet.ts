@@ -1,10 +1,14 @@
 import Helmet from 'react-helmet'
 import { Middleware } from 'react-chain/lib/ReactChain'
+import { SessionT } from 'react-chain/lib/Session'
+import { HelmetData } from 'react-helmet'
 
-const helmet = (): Middleware => session => {
-  session.on('server', (render: Function) => {
+const helmet = (): Middleware => (session: SessionT & {
+  helmet: HelmetData,
+}) => {
+  session.on('server', render => {
     render()
-    session.helmet = Helmet.rewind()
+    session.helmet = Helmet.renderStatic()
   })
 }
 

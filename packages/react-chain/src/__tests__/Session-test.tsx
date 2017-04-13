@@ -1,7 +1,7 @@
 import createSession, { SessionT } from '../Session'
-import * as React from 'react'
 import reactChainProvider from '../ReactChainProvider'
 import { render } from '../SessionUtils'
+import 'react'
 
 describe('Session', () => {
   let session: SessionT
@@ -23,13 +23,14 @@ describe('Session', () => {
   })
 
   it('should have readonly properties', () => {
-    const props = ['__elementChain', '__browserChain', '__serverChain', 'on']
+    const props: Array<keyof SessionT> = ['__elementChain', '__browserChain', '__serverChain', 'on']
+    const fakeSession = createSession() as any
     let initial: any
     props.forEach(prop => {
-      initial = session[prop]
+      initial = fakeSession[prop]
       expect(initial).toBeDefined()
       expect(() => {
-        session[prop] = 'fake'
+        fakeSession[prop] = 'fake'
       }).toThrowErrorMatchingSnapshot()
     })
   })
@@ -101,19 +102,22 @@ describe('Session', () => {
   })
 
   it('can modify the exposed instance', () => {
-    session.on('browser', render => {
-      session.someEdit = 'someEdit'
+    let fakeSession: SessionT & { someEdit?: string }
+    fakeSession = createSession()
+
+    fakeSession.on('browser', render => {
+      fakeSession.someEdit = 'someEdit'
       render()
     })
 
-    session.on('browser', render => {
-      session.someEdit += ' anotherEdit'
+    fakeSession.on('browser', render => {
+      fakeSession.someEdit += ' anotherEdit'
       render()
     })
 
-    render(session, 'browser')()
+    render(fakeSession, 'browser')()
 
-    expect(session).toHaveProperty('someEdit', 'someEdit anotherEdit')
+    expect(fakeSession).toHaveProperty('someEdit', 'someEdit anotherEdit')
   })
 
   it('should have a render chain that starts with createReactChainProvider', () => {

@@ -2,6 +2,7 @@ import chainHistory from '../ReactChainHistory'
 import HistoryProvider from '../HistoryProvider'
 import * as React from 'react'
 import { shallow } from 'enzyme'
+import { WrapElement } from '../../../react-chain/src/ReactChain'
 
 describe('react-chain-history', () => {
   it('should be a function', () => {
@@ -11,7 +12,7 @@ describe('react-chain-history', () => {
   it('should wrap an element in the HistoryProvider', async () => {
     const history = chainHistory()
     const refresh = jest.fn()
-    const element = await history({ refresh })(() => <div />)
+    const element = await history({ refresh } as any)(() => <div />)
 
     expect(shallow(element).instance()).toBeInstanceOf(HistoryProvider)
   })
@@ -22,7 +23,7 @@ describe('react-chain-history', () => {
       refresh: jest.fn(),
     }
 
-    await history(session)(() => <div />)
+    await history(session as any)(() => <div />)
 
     expect(session).toHaveProperty('history')
   })
@@ -38,7 +39,7 @@ describe('react-chain-history', () => {
     })
 
     it('should have a listen method on the history', async () => {
-      await history(session)(render)
+      await history(session as any)(render)
       expect(session.history).toHaveProperty('listen')
       expect(typeof session.history.listen).toBe('function')
     })

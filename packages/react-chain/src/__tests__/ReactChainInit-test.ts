@@ -16,7 +16,7 @@ describe('ReactChainInit', () => {
       'css',
       'js',
     ]
-    const session = createSession()
+    const session = createSession() as any
     middleware(session)
     props.forEach(prop => {
       expect(session).toHaveProperty(prop)

@@ -39,11 +39,11 @@ describe('ReactChain', () => {
     })
 
     it('should have mutable props', async () => {
-      app.chain(session => {
+      app.chain((session: any) => {
         session.someEdit = 'someEdit'
       })
 
-      app.chain(session => {
+      app.chain((session: any) => {
         session.someEdit += ' anotherEdit'
       })
 

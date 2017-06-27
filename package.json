@@ -26,7 +26,7 @@
     "react-test-renderer": "^15.4.2",
     "ts-jest": "^19.0.3",
     "tslint": "^5.0.0",
-    "typescript": "^2.2.1"
+    "typescript": "2.4.0"
   },
   "scripts": {
     "bootstrap": "lerna bootstrap --hoist",

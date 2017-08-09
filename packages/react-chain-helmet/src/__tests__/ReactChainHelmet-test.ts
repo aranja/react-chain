@@ -12,18 +12,15 @@ describe('react-chain-helmet', () => {
     expect(typeof session).toBe('function')
   })
 
-  it('should call render and modify the context on server render', done => {
+  it('should call unfoldRender and modify the context on server unfoldRender', done => {
     const next = jest.fn()
-    const on = jest.fn((target, render) => {
+    const on = jest.fn((_, render) => {
       render(next)
-      expect(sessionMock.headProps).toHaveProperty('helmet', true)
+      expect(sessionMock).toHaveProperty('helmet', {})
       expect(next).toHaveBeenCalled()
       done()
     })
-    const sessionMock = {
-      on,
-      headProps: {},
-    }
-    chainHelmet()(sessionMock)
+    const sessionMock = { on }
+    chainHelmet()(sessionMock as any)
   })
 })

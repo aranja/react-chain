@@ -17,7 +17,8 @@
     "test": "../../node_modules/.bin/jest"
   },
   "devDependencies": {
-    "@types/history": "^4.5.0"
+    "@types/history": "^4.5.0",
+    "react-chain": "^0.3.1"
   },
   "dependencies": {
     "history": "^4.6.1",

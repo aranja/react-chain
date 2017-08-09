@@ -1,7 +1,7 @@
-import createSession, { SessionT } from '../Session'
-import * as React from 'react'
-import reactChainProvider from '../ReactChainProvider'
-import { render } from '../SessionUtils'
+import 'react'
+import createSession from '../Session'
+import { unfoldRender } from '../utils'
+import { SessionT } from '../types'
 
 describe('Session', () => {
   let session: SessionT
@@ -23,13 +23,14 @@ describe('Session', () => {
   })
 
   it('should have readonly properties', () => {
-    const props = ['__elementChain', '__browserChain', '__serverChain', 'on']
+    const props: Array<keyof SessionT> = ['__elementChain', '__browserChain', '__serverChain', 'on']
+    const fakeSession = createSession() as any
     let initial: any
     props.forEach(prop => {
-      initial = session[prop]
+      initial = fakeSession[prop]
       expect(initial).toBeDefined()
       expect(() => {
-        session[prop] = 'fake'
+        fakeSession[prop] = 'fake'
       }).toThrowErrorMatchingSnapshot()
     })
   })
@@ -62,11 +63,11 @@ describe('Session', () => {
       serverCallOrder.push('SERVER_RENDER_2')
     })
 
-    render(session, 'browser')(() => {
+    unfoldRender(session, 'browser', () => {
       browserCallOrder.push('ACTUAL_RENDER')
     })
 
-    render(session, 'server')(() => {
+    unfoldRender(session, 'server', () => {
       serverCallOrder.push('ACTUAL_RENDER')
       return ''
     })
@@ -88,7 +89,7 @@ describe('Session', () => {
     ])
   })
 
-  it('should throw if fails to call render', () => {
+  it('should throw if fails to call render callback', () => {
     session.on('browser', render => {
       render()
     })
@@ -96,27 +97,26 @@ describe('Session', () => {
     session.on('browser', render => { })
 
     expect(() => {
-      render(session, 'browser')()
+      unfoldRender(session, 'browser')
     }).toThrow()
   })
 
   it('can modify the exposed instance', () => {
-    session.on('browser', render => {
-      session.someEdit = 'someEdit'
+    let fakeSession: SessionT & { someEdit?: string }
+    fakeSession = createSession()
+
+    fakeSession.on('browser', render => {
+      fakeSession.someEdit = 'someEdit'
       render()
     })
 
-    session.on('browser', render => {
-      session.someEdit += ' anotherEdit'
+    fakeSession.on('browser', render => {
+      fakeSession.someEdit += ' anotherEdit'
       render()
     })
 
-    render(session, 'browser')()
+    unfoldRender(fakeSession, 'browser')
 
-    expect(session).toHaveProperty('someEdit', 'someEdit anotherEdit')
-  })
-
-  it('should have a render chain that starts with createReactChainProvider', () => {
-    expect(session).toHaveProperty('__elementChain', [reactChainProvider])
+    expect(fakeSession).toHaveProperty('someEdit', 'someEdit anotherEdit')
   })
 })

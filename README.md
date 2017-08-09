@@ -46,9 +46,13 @@ The `session` object that is passed to the middleware has the following API:
 ```ts
 interface Session {
   on: OnRender
-  htmlProps: any
-  headProps: any
-  window: any
+  htmlProps: { [key: string]: string }
+  bodyProps: { [key: string]: string }
+  window: { [key: string]: any }
+  head: ReactElement<any>[]
+  footer: ReactElement<any>[]
+  css: string[]
+  js: string[]
 }
 
 type OnRender = 

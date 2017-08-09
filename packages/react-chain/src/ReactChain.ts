@@ -1,28 +1,14 @@
-import createSession, { SessionT } from './Session'
-import { ReactElement, isValidElement } from 'react'
-import { render } from './SessionUtils'
+import createSession from './Session'
+import { ReactElement } from 'react'
+import { validateElementCreator, unfoldRender, renderElementChain } from './utils'
+import reactChainProvider from './ReactChainProvider'
 import reactChainInitMiddleware from './ReactChainInit'
-
-export type RenderTarget =
-  'browser' |
-  'server'
-
-export type WrapElement =
-  (renderChildren: () => Promise<null | ReactElement<any>>, context: any) =>
-    ReactElement<any> | Promise<ReactElement<any>>
-
-export type WrapRender =
-  (render: Function) =>
-    void
-
-export type Middleware =
-  (session: SessionT) =>
-    (void | WrapElement)
+import { MiddlewareT, SessionT, CreateElementT } from './types'
 
 export class ReactChain {
-  middlewareChain: Array<Middleware> = [reactChainInitMiddleware]
+  middlewareChain: Array<MiddlewareT> = [reactChainInitMiddleware]
 
-  chain(middleware?: Middleware) {
+  chain(middleware?: MiddlewareT) {
     if (typeof middleware !== 'function') {
       throw new Error('A react-chain middleware should be a function')
     }
@@ -41,40 +27,21 @@ export class ReactChain {
 
     if (session.__firstRender) {
       this.middlewareChain.forEach(middleware => {
-        const createElement = middleware(session)
-        if (createElement) {
-          const returnType = isValidElement(createElement)
-            ? 'ReactElement'
-            : typeof createElement
-
-          if (returnType !== 'function') {
-            throw new Error(
-              `.chain(): A session wrap can return a 'next' ` +
-              `function or void, instead returns '${returnType}'.`
-            )
-          }
-
-          session.__elementChain.push(createElement as WrapElement)
+        let createElement: void | CreateElementT
+        if ((createElement = validateElementCreator(middleware(session)))) {
+          session.__elementChain.push(createElement)
         }
       })
+
       session.__firstRender = false
     }
 
-    let index = 0
-    const next = (): Promise<any> => {
-      const createElement = session.__elementChain[index++]
-      const renderChildren = session.__elementChain[index]
-        ? next
-        : () => Promise.resolve(null)
-      return Promise.resolve(createElement(renderChildren, session))
-    }
-
-    return await next()
+    return await reactChainProvider(renderElementChain(session.__elementChain), session)
   }
 
   async renderBrowser(session: SessionT, onRender: (element: ReactElement<any>) => void) {
     const element = await this.getElement(session)
-    render(session, 'browser')(() => {
+    unfoldRender(session, 'browser', () => {
       onRender(element)
     })
   }
@@ -82,7 +49,7 @@ export class ReactChain {
   async renderServer(session: SessionT, onRender: (element: ReactElement<any>) => string) {
     const element = await this.getElement(session)
     let body = ''
-    render(session, 'server')(() => {
+    unfoldRender(session, 'server', () => {
       body = onRender(element)
     })
     return body

@@ -1,13 +1,14 @@
 import * as React from 'react'
+import * as PropTypes from 'prop-types'
 
 class HistoryProvider extends React.Component<any, any> {
   static propTypes = {
-    history: React.PropTypes.object.isRequired,
-    children: React.PropTypes.element.isRequired,
+    history: PropTypes.object.isRequired,
+    children: PropTypes.element.isRequired,
   }
 
   static childContextTypes = {
-    history: React.PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
   }
 
   getChildContext() {

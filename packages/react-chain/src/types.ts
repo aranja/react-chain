@@ -5,11 +5,11 @@ export type RenderTargetT =
   'server'
 
 export type AwaitNextT =
-  () => null | Promise<ReactElement<any>>
+  () => null | Promise<null | ReactElement<any>>
 
 export type CreateElementT =
   (next: AwaitNextT) =>
-    ReactElement<any> | Promise<ReactElement<any>>
+    null | ReactElement<any> | Promise<null | ReactElement<any>>
 
 export type WrapRenderCallT =
   (render: Function) =>

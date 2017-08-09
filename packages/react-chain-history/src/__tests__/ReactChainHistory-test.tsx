@@ -14,7 +14,9 @@ describe('react-chain-history', () => {
     const refresh = jest.fn()
     const element = await history({ refresh } as any)(async () => <div />)
 
-    expect(shallow(element).instance()).toBeInstanceOf(HistoryProvider)
+    expect(
+      shallow(element as React.ReactElement<any>).instance()
+    ).toBeInstanceOf(HistoryProvider)
   })
 
   it('should add a history object to the context', async () => {

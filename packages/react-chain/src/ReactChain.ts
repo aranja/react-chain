@@ -5,6 +5,8 @@ import reactChainProvider from './ReactChainProvider'
 import reactChainInitMiddleware from './ReactChainInit'
 import { MiddlewareT, SessionT, CreateElementT } from './types'
 
+export { MiddlewareT, SessionT, CreateElementT }
+
 export class ReactChain {
   middlewareChain: Array<MiddlewareT> = [reactChainInitMiddleware]
 

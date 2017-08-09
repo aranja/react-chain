@@ -6,6 +6,7 @@
   "author": "Aranja",
   "main": "lib/ReactChain.js",
   "license": "MIT",
+  "types": "lib/ReactChain.d.ts",
   "scripts": {
     "clean": "rm -rf lib",
     "prepublish": "npm run clean && npm run typescript",

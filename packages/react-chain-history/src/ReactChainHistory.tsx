@@ -3,7 +3,7 @@ import createBrowserHistory from 'history/createBrowserHistory'
 import createMemoryHistory from 'history/createMemoryHistory'
 import HistoryProvider from './HistoryProvider'
 import { History } from 'history'
-import { CreateElementT, SessionT } from 'react-chain/lib/types'
+import { CreateElementT, SessionT } from 'react-chain'
 
 export default () => (session: SessionT & {
   history: History

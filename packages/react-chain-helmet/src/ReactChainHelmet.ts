@@ -1,6 +1,6 @@
 import Helmet from 'react-helmet'
 import { HelmetData } from 'react-helmet'
-import { MiddlewareT, SessionT } from 'react-chain/lib/types'
+import { MiddlewareT, SessionT } from 'react-chain'
 
 const helmet = (): MiddlewareT => (session: SessionT & {
   helmet: HelmetData,

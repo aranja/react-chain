@@ -1,6 +1,6 @@
 {
   "name": "react-chain-helmet",
-  "version": "0.4.0-1",
+  "version": "0.4.0",
   "description": "A react-chain middleware for react-helmet",
   "main": "lib/ReactChainHelmet.js",
   "repository": {
@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@types/react-helmet": "^5.0.0",
-    "react-chain": "^0.4.0-1"
+    "react-chain": "^0.4.0"
   },
   "peerDependencies": {
     "react": "^15.4.2 || ^16.0.0-beta || ^16.0.0"

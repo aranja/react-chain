@@ -26,7 +26,6 @@
   },
   "dependencies": {
     "history": "^4.6.1",
-    "prop-types": "^15.5.10",
-    "react": "^15.4.2"
+    "prop-types": "^15.5.10"
   }
 }

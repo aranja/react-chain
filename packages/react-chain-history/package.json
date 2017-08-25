@@ -9,6 +9,7 @@
   },
   "author": "Aranja",
   "license": "MIT",
+  "files": ["lib"],
   "scripts": {
     "clean": "rm -rf lib",
     "prepublish": "npm run clean && npm run typescript",

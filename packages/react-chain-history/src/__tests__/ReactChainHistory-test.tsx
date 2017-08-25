@@ -2,7 +2,7 @@ import chainHistory from '../ReactChainHistory'
 import HistoryProvider from '../HistoryProvider'
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import { CreateElement, Middleware } from '../../../react-chain/src/types'
+import { CreateElement, Middleware } from 'react-chain'
 
 async function callHistory(history: Middleware, session: any, render: any) {
   return await (history(session) as CreateElement)(render)

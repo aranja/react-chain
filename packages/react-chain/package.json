@@ -1,13 +1,15 @@
 {
   "name": "react-chain",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "A chain of pluggable logic for your React rendering pipline.",
   "repository": "git@github.com:aranja/react-chain.git",
   "author": "Aranja",
   "main": "lib/ReactChain.js",
   "license": "MIT",
   "types": "lib/ReactChain.d.ts",
-  "files": ["lib"],
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "clean": "rm -rf lib",
     "prepublish": "npm run clean && npm run typescript",

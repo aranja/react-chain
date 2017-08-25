@@ -4,11 +4,11 @@ import createSession from '../Session'
 import { shallow } from 'enzyme'
 import { ReactChainProvider } from '../ReactChainProvider'
 import reactChainInitMiddleware from '../ReactChainInit'
-import { SessionT } from '../types'
+import { Session } from '../types'
 
 describe('ReactChain', () => {
   let app: ReactChain
-  let internalSession: SessionT
+  let internalSession: Session
 
   beforeEach(() => {
     app = createReactChain()

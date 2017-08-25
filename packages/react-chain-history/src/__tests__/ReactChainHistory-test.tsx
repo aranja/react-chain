@@ -2,7 +2,11 @@ import chainHistory from '../ReactChainHistory'
 import HistoryProvider from '../HistoryProvider'
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import { CreateElementT } from 'react-chain/lib/types'
+import { CreateElement, Middleware } from '../../../react-chain/src/types'
+
+async function callHistory(history: Middleware, session: any, render: any) {
+  return await (history(session) as CreateElement)(render)
+}
 
 describe('react-chain-history', () => {
   it('should be a function', () => {
@@ -12,7 +16,7 @@ describe('react-chain-history', () => {
   it('should wrap an element in the HistoryProvider', async () => {
     const history = chainHistory()
     const refresh = jest.fn()
-    const element = await history({ refresh } as any)(async () => <div />)
+    const element = await callHistory(history, refresh, async () => <div/>)
 
     expect(
       shallow(element as React.ReactElement<any>).instance()
@@ -25,7 +29,7 @@ describe('react-chain-history', () => {
       refresh: jest.fn(),
     }
 
-    await history(session as any)(async () => <div />)
+    await callHistory(history, session, async () => <div />)
 
     expect(session).toHaveProperty('history')
   })
@@ -41,13 +45,13 @@ describe('react-chain-history', () => {
     })
 
     it('should have a listen method on the history', async () => {
-      await history(session as any)(render)
+      await callHistory(history, session, render)
       expect(session.history).toHaveProperty('listen')
       expect(typeof session.history.listen).toBe('function')
     })
 
     it('should invoke the session\'s refresh on history change', async () => {
-      await history(session)(render)
+      await callHistory(history, session, render)
       expect(session.refresh).toHaveBeenCalled()
     })
   })
@@ -66,7 +70,7 @@ describe('react-chain-history', () => {
 
     it('should add a memory history object to the session', async () => {
       const history = chainHistory()
-      await history(session)(render)
+      await callHistory(history, session, render)
       expect(session.history).toBeDefined()
     })
   })

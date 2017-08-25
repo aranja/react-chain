@@ -1,29 +1,29 @@
 import { ReactElement } from 'react'
 
-export type RenderTargetT =
+export type RenderTarget =
   'browser' |
   'server'
 
-export type AwaitNextT =
-  () => null | Promise<null | ReactElement<any>>
+export type AwaitNext =
+  () => Promise<null | ReactElement<any>>
 
-export type CreateElementT =
-  (next: AwaitNextT) =>
+export type CreateElement =
+  (next: AwaitNext) =>
     null | ReactElement<any> | Promise<null | ReactElement<any>>
 
-export type WrapRenderCallT =
-  (render: Function) =>
+export type WrapRenderCall =
+  (render: () => {}) =>
     void
 
-export type MiddlewareT =
-  (session: SessionT) =>
-    (void | CreateElementT)
+export type Middleware =
+  (session: Session) =>
+    (void | CreateElement)
 
-export interface SessionT {
-  readonly __browserChain: WrapRenderCallT[]
-  readonly __serverChain: WrapRenderCallT[]
-  readonly __elementChain: CreateElementT[]
-  readonly on: (target?: RenderTargetT, render?: WrapRenderCallT) => void
+export interface Session {
+  readonly __browserChain: WrapRenderCall[]
+  readonly __serverChain: WrapRenderCall[]
+  readonly __elementChain: CreateElement[]
+  readonly on: (target?: RenderTarget, render?: WrapRenderCall) => void
   __firstRender: boolean
   htmlProps: { [key: string]: string }
   bodyProps: { [key: string]: string }
@@ -32,7 +32,7 @@ export interface SessionT {
   footer: ReactElement<any>[]
   css: string[]
   js: string[]
-  refresh?: Function
+  refresh?(onComplete?: (element: Element) => void): void
   req?: any
   res?: any
 }

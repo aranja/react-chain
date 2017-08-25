@@ -1,9 +1,9 @@
 import * as React from 'react'
-import { AwaitNextT, SessionT } from './types'
+import { AwaitNext, Session } from './types'
 
 export class ReactChainProvider extends React.Component<{
-  context: SessionT,
-  nextContext?: SessionT,
+  context: Session,
+  nextContext?: Session,
   children?: any,
 }, any> {
   static childContextTypes = {}
@@ -17,7 +17,7 @@ export class ReactChainProvider extends React.Component<{
   }
 }
 
-export default async function createBase(next: AwaitNextT, context: SessionT) {
+export default async function createBase(next: AwaitNext, context: Session) {
   return React.createElement(ReactChainProvider, { context }, typeof next === 'function'
     ? await next()
     : null

@@ -1,10 +1,10 @@
 import 'react'
 import createSession from '../Session'
 import { unfoldRender } from '../utils'
-import { SessionT } from '../types'
+import { Session } from '../types'
 
 describe('Session', () => {
-  let session: SessionT
+  let session: Session
 
   beforeEach(() => {
     session = createSession()
@@ -23,7 +23,7 @@ describe('Session', () => {
   })
 
   it('should have readonly properties', () => {
-    const props: Array<keyof SessionT> = ['__elementChain', '__browserChain', '__serverChain', 'on']
+    const props: Array<keyof Session> = ['__elementChain', '__browserChain', '__serverChain', 'on']
     const fakeSession = createSession() as any
     let initial: any
     props.forEach(prop => {
@@ -102,7 +102,7 @@ describe('Session', () => {
   })
 
   it('can modify the exposed instance', () => {
-    let fakeSession: SessionT & { someEdit?: string }
+    let fakeSession: Session & { someEdit?: string }
     fakeSession = createSession()
 
     fakeSession.on('browser', render => {

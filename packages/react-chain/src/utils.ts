@@ -1,9 +1,9 @@
-import { AwaitNextT, CreateElementT, RenderTargetT, SessionT, WrapRenderCallT } from './types'
+import { AwaitNext, CreateElement, RenderTarget, Session, WrapRenderCall } from './types'
 import { isValidElement } from 'react'
 
 export function getChainForTarget(
-  session: SessionT,
-  target?: RenderTargetT,
+  session: Session,
+  target?: RenderTarget,
 ) {
   switch (target) {
     case 'browser':
@@ -18,18 +18,16 @@ export function getChainForTarget(
   }
 }
 
-export function renderElementChain(creators: CreateElementT[]) {
+export function renderElementChain(creators: CreateElement[]) {
   let index = 0
-  const next: AwaitNextT = () => {
+  const next: AwaitNext = () => {
     const createElement = creators[index++] || null
-    return createElement && Promise.resolve(createElement(
-      creators[index] ? next : () => null
-    ))
+    return Promise.resolve(createElement && createElement(next))
   }
   return next
 }
 
-export function validateElementCreator(createElement?: any): void | CreateElementT {
+export function validateElementCreator(createElement?: any): void | CreateElement {
   if (createElement == null) {
     return
   }
@@ -48,7 +46,7 @@ export function validateElementCreator(createElement?: any): void | CreateElemen
   return createElement
 }
 
-export function renderRecursively(wrappers: WrapRenderCallT[], onComplete: Function) {
+export function renderRecursively(wrappers: WrapRenderCall[], onComplete: Function) {
   let index = 0
 
   if (wrappers.length === 0) {
@@ -78,7 +76,7 @@ export function renderRecursively(wrappers: WrapRenderCallT[], onComplete: Funct
   }
 }
 
-export function unfoldRender(session: SessionT, target: RenderTargetT, onComplete = () => {}) {
+export function unfoldRender(session: Session, target: RenderTarget, onComplete = () => {}) {
   const chain = getChainForTarget(session, target)
   renderRecursively(chain, onComplete)
 }

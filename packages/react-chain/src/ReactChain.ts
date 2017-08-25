@@ -3,14 +3,13 @@ import { ReactElement } from 'react'
 import { validateElementCreator, unfoldRender, renderElementChain } from './utils'
 import reactChainProvider from './ReactChainProvider'
 import reactChainInitMiddleware from './ReactChainInit'
-import { MiddlewareT, SessionT, CreateElementT } from './types'
-
-export { MiddlewareT, SessionT, CreateElementT }
+import { Middleware, Session, CreateElement } from './types'
+export { Middleware, Session, CreateElement }
 
 export class ReactChain {
-  middlewareChain: Array<MiddlewareT> = [reactChainInitMiddleware]
+  middlewareChain: Array<Middleware> = [reactChainInitMiddleware]
 
-  chain(middleware?: MiddlewareT) {
+  chain(middleware?: Middleware) {
     if (typeof middleware !== 'function') {
       throw new Error('A react-chain middleware should be a function')
     }
@@ -22,14 +21,14 @@ export class ReactChain {
 
   createSession = createSession
 
-  async getElement(session?: SessionT): Promise<any> {
+  async getElement(session?: Session): Promise<any> {
     if (session == null) {
       throw new Error('Missing session object.')
     }
 
     if (session.__firstRender) {
       this.middlewareChain.forEach(middleware => {
-        let createElement: void | CreateElementT
+        let createElement: void | CreateElement
         if ((createElement = validateElementCreator(middleware(session)))) {
           session.__elementChain.push(createElement)
         }
@@ -41,14 +40,14 @@ export class ReactChain {
     return await reactChainProvider(renderElementChain(session.__elementChain), session)
   }
 
-  async renderBrowser(session: SessionT, onRender: (element: ReactElement<any>) => void) {
+  async renderBrowser(session: Session, onRender: (element: ReactElement<any>) => void) {
     const element = await this.getElement(session)
     unfoldRender(session, 'browser', () => {
       onRender(element)
     })
   }
 
-  async renderServer(session: SessionT, onRender: (element: ReactElement<any>) => string) {
+  async renderServer(session: Session, onRender: (element: ReactElement<any>) => string) {
     const element = await this.getElement(session)
     let body = ''
     unfoldRender(session, 'server', () => {

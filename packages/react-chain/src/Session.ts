@@ -1,7 +1,7 @@
 import { getChainForTarget } from './utils'
-import { RenderTargetT, SessionT, WrapRenderCallT } from './types'
+import { RenderTarget, Session, WrapRenderCall } from './types'
 
-export default function(): SessionT {
+export default function(): Session {
   const session = Object.create({}, {
     __browserChain: { value: [] },
     __serverChain: { value: [] },
@@ -10,7 +10,7 @@ export default function(): SessionT {
   })
 
   return Object.defineProperty(session, 'on', {
-    value(target?: RenderTargetT, render?: WrapRenderCallT) {
+    value(target?: RenderTarget, render?: WrapRenderCall) {
       const chain = getChainForTarget(session, target)
 
       if (typeof render !== 'function') {

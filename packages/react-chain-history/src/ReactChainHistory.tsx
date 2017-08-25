@@ -3,11 +3,11 @@ import createBrowserHistory from 'history/createBrowserHistory'
 import createMemoryHistory from 'history/createMemoryHistory'
 import HistoryProvider from './HistoryProvider'
 import { History } from 'history'
-import { CreateElementT, SessionT } from 'react-chain'
+import { CreateElement, Session, Middleware } from 'react-chain'
 
-export default () => (session: SessionT & {
+export default (): Middleware => (session: Session & {
   history: History
-}): CreateElementT => {
+}) => {
   if (session.req) {
     session.history = createMemoryHistory({
       initialEntries: [session.req.url],

@@ -9,7 +9,9 @@ export default () => (session: SessionT & {
   history: History
 }): CreateElementT => {
   if (session.req) {
-    session.history = createMemoryHistory()
+    session.history = createMemoryHistory({
+      initialEntries: [session.req.url],
+    })
   } else {
     session.history = createBrowserHistory()
     session.history.listen(() => {

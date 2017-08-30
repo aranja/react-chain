@@ -1,6 +1,6 @@
 <img src="images/react chain logo.png" width="50%">
 
-[![CircleCI](https://img.shields.io/circleci/project/github/aranja/react-chain.svg)](https://circleci.com/gh/aranja/react-chain) [![Greenkeeper badge](https://badges.greenkeeper.io/aranja/react-chain.svg)](https://greenkeeper.io/) [![codecov](https://codecov.io/gh/aranja/react-chain/branch/master/graph/badge.svg)](https://codecov.io/gh/aranja/react-chain)
+[![CircleCI](https://img.shields.io/circleci/project/github/aranja/react-chain/master.svg)](https://circleci.com/gh/aranja/react-chain) [![Greenkeeper badge](https://badges.greenkeeper.io/aranja/react-chain.svg)](https://greenkeeper.io/) [![codecov](https://codecov.io/gh/aranja/react-chain/branch/master/graph/badge.svg)](https://codecov.io/gh/aranja/react-chain)
 
 react-chain simplifies the process of bootstraping browser, and server rendered React applications with a shared middleware chain. It allows developers to share custom logic with both rendering targets, as well as targeting either one specifically. Additionally, some parts of the browser’s rendering process need only happen once, therefore react-chain middleware is designed around the concept of sessions. Each session wraps the rendering of the app. This allows us to run setup code ahead of, or after the inital, or continous, render process.
 

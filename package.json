@@ -1,18 +1,19 @@
 {
-  "name": "react-chain-project",
-  "version": "0.1.0",
+  "name": "react-chain",
+  "version": "0.4.3",
   "description": "A chain of pluggable logic for your React rendering pipline.",
   "repository": "git@github.com:aranja/react-chain.git",
   "author": "Aranja",
+  "main": "lib/ReactChain.js",
   "license": "MIT",
-  "private": true,
-  "dependencies": {
-    "react": "^15.4.2",
-    "react-dom": "^15.4.2"
-  },
+  "types": "lib/ReactChain.d.ts",
+  "files": [
+    "lib"
+  ],
+  "dependencies": {},
   "devDependencies": {
     "@types/enzyme": "^2.7.6",
-    "@types/jest": "^19.2.2",
+    "@types/jest": "^20.0.8",
     "@types/react": "^15.0.0",
     "@types/react-dom": "^0.14.23",
     "babel-jest": "^19.0.0",
@@ -20,29 +21,33 @@
     "babel-preset-react": "^6.23.0",
     "codecov": "^2.1.0",
     "enzyme": "^2.7.1",
-    "jest": "^19.0.2",
+    "jest": "^21.0.2",
     "lerna": "2.0.0-rc.1",
+    "react": "^15.4.2",
     "react-addons-test-utils": "^15.4.2",
+    "react-dom": "^15.4.2",
     "react-test-renderer": "^15.4.2",
     "ts-jest": "^19.0.3",
     "tslint": "^5.0.0",
     "typescript": "^2.2.1"
   },
+  "peerDependencies": {
+    "react": "^15.0.0 || ^16.0.0-beta || ^16.0.0",
+    "react-dom": "^15.0.0 || ^16.0.0-beta || ^16.0.0"
+  },
   "scripts": {
-    "bootstrap": "lerna bootstrap --hoist",
-    "build": "lerna run prepublish",
-    "clean": "lerna clean",
-    "lerna": "lerna",
+    "clean": "rm -rf lib",
     "lint": "./scripts/lint.sh",
-    "postinstall": "npm run bootstrap",
-    "watch": "lerna run watch --stream --no-sort",
+    "prepare": "npm run clean && npm run typescript",
+    "typescript": "tsc",
+    "watch": "npm run typescript -- --watch",
     "test": "jest",
     "test-ci": "npm run lint && jest --runInBand --coverage && codecov"
   },
   "jest": {
     "collectCoverageFrom": [
-      "**/packages/*/src/**/*",
-      "!**/lib/**",
+      "src/**/*",
+      "!lib/**",
       "!**/__mocks__/**",
       "!**/__tests__/**"
     ],

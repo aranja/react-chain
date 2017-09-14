@@ -24,7 +24,7 @@ export function renderElementChain(creators: CreateElement[]) {
     const createElement = creators[index++] || null
     return Promise.resolve(createElement && createElement(next))
   }
-  return next
+  return next()
 }
 
 export function validateElementCreator(createElement?: any): void | CreateElement {
@@ -47,14 +47,13 @@ export function validateElementCreator(createElement?: any): void | CreateElemen
 }
 
 export function renderRecursively(wrappers: WrapRenderCall[], onComplete: Function) {
-  let index = 0
-
   if (wrappers.length === 0) {
-    onComplete()
-    return
+    return onComplete()
   }
 
+  let index = 0
   let didCallRenderers = false
+  let currentResult: any = null
 
   function wrappedComplete() {
     didCallRenderers = true
@@ -62,21 +61,28 @@ export function renderRecursively(wrappers: WrapRenderCall[], onComplete: Functi
   }
 
   function next() {
-    const wrap = wrappers[index++]
-    const callback = wrappers[index] == null ? wrappedComplete : next
-    wrap(callback)
+    if (!wrappers[index]) {
+      currentResult = wrappedComplete()
+    } else {
+      const current = wrappers[index++]
+      const result = current(next)
+      currentResult = result != null ? result : currentResult
+    }
+    return currentResult
   }
 
-  next()
+  const result = next()
 
   if (!didCallRenderers) {
     throw new Error(
       `session.on: some render wrapper didn't call 'render()'.`
     )
   }
+
+  return result
 }
 
 export function unfoldRender(session: Session, target: RenderTarget, onComplete = () => {}) {
   const chain = getChainForTarget(session, target)
-  renderRecursively(chain, onComplete)
+  return renderRecursively(chain, onComplete)
 }

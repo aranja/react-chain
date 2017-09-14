@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 tslint -c './tslint.json' \
-  -e './packages/**/node_modules/**/*' \
-  -e './packages/**/es/**/*'\
-  -e './packages/**/lib/**/*' \
-  './packages/**/*.{ts,tsx}';
+  -e './node_modules/**/*' \
+  -e './es/**/*'\
+  -e './lib/**/*' \
+  './src/**/*.{ts,tsx}';

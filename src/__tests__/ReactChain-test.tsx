@@ -2,9 +2,16 @@ import * as React from 'react'
 import createReactChain, { ReactChain } from '../ReactChain'
 import createSession from '../Session'
 import { shallow } from 'enzyme'
-import { ReactChainProvider } from '../ReactChainProvider'
-import reactChainInitMiddleware from '../ReactChainInit'
-import { Session } from '../types'
+import { Middleware, Session } from '../types'
+
+class TestProvider extends React.Component<any> {
+  render() {
+    return this.props.children
+  }
+}
+
+const testMiddleware: Middleware = () => async (next) =>
+  <TestProvider>{(await next())}</TestProvider>
 
 describe('ReactChain', () => {
   let app: ReactChain
@@ -34,9 +41,8 @@ describe('ReactChain', () => {
       expect(app.chain(() => { })).toBe(app)
     })
 
-    it('should initialize the chain with ReactChainInit', async () => {
-      expect(app.middlewareChain.length).toBe(1)
-      expect(app.middlewareChain[0]).toBe(reactChainInitMiddleware)
+    it('should initialize an empty chain', async () => {
+      expect(app.middlewareChain.length).toBe(0)
     })
 
     it('should have mutable props', async () => {
@@ -94,21 +100,6 @@ describe('ReactChain', () => {
       }
     })
 
-    it('should wrap with ReactChainProvider', async () => {
-      const element = await app.getElement(internalSession)
-      const wrapper = shallow(element)
-      const instance = wrapper.instance()
-
-      expect(instance).toBeInstanceOf(ReactChainProvider)
-    })
-
-    it('should wrap same ReactChainProvider component each time', async () => {
-      const element1 = await app.getElement(internalSession)
-      const element2 = await app.getElement(internalSession)
-
-      expect(element1.type).toEqual(element2.type)
-    })
-
     it('should reuse previous session and element chain each time', async () => {
       const actual: any[] = []
 
@@ -125,29 +116,65 @@ describe('ReactChain', () => {
         internalSession,
       ])
     })
-  })
 
-  describe('.renderServer()', () => {
-    it('should be callable', () => {
-      expect(typeof app.renderServer).toBe('function')
-    })
+    it('should return element for middleware', async () => {
+      const actual = <div />
+      app.chain(actual)
 
-    it('should pass the element to the render callback', async () => {
-      const html = await app.renderServer(internalSession, element => JSON.stringify(element))
-      expect(html).toMatchSnapshot()
+      const element = await app.getElement(internalSession)
+      expect(element).toEqual(actual)
     })
   })
 
-  describe('.renderBrowser()', () => {
-    it('should be callable', () => {
-      expect(typeof app.renderBrowser).toBe('function')
+  describe('with middleware', () => {
+    beforeEach(() => {
+      app.chain(testMiddleware)
     })
 
-    it('should pass the element to the render callback', done => {
-      app.renderBrowser(internalSession, element => {
-        expect(element).toBeDefined()
-        expect(shallow(element).instance()).toBeInstanceOf(ReactChainProvider)
-        done()
+    describe('.renderServer()', () => {
+      it('should be callable', () => {
+        expect(typeof app.renderServer).toBe('function')
+      })
+
+      it('should pass the element to the render callback', async () => {
+        expect.hasAssertions()
+        await app.renderServer(internalSession, element =>
+          expect(element.type).toEqual(TestProvider)
+        )
+      })
+
+      it('should return the result of the render callback', async () => {
+        const actual = 'result'
+        const result = await app.renderServer(internalSession, () => actual)
+        expect(result).toEqual(actual)
+      })
+
+      it('should return the result of any truthy middleware', async () => {
+        const actual = 'result'
+        const wrong = 'wrong'
+        app.chain(session => {
+          session.on('server', render => {
+            render()
+            return actual
+          })
+        })
+
+        const result = await app.renderServer(internalSession, () => wrong)
+        expect(result).toEqual(actual)
+      })
+    })
+
+    describe('.renderBrowser()', () => {
+      it('should be callable', () => {
+        expect(typeof app.renderBrowser).toBe('function')
+      })
+
+      it('should pass the element to the render callback', async () => {
+        expect.assertions(2)
+        await app.renderBrowser(internalSession, element => {
+          expect(element).toBeDefined()
+          expect(shallow(element).instance()).toBeInstanceOf(TestProvider)
+        })
       })
     })
   })

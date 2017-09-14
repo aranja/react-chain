@@ -7,12 +7,16 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "noImplicitAny": true,
+    "outDir": "./lib",
     "preserveConstEnums": true,
     "removeComments": false,
     "sourceMap": true,
     "strictNullChecks": true,
     "target": "es2015"
   },
+  "include": [
+    "./src"
+  ],
   "exclude": [
     "**/__mocks__/*"
   ]

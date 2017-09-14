@@ -1,15 +1,16 @@
 import createSession from './Session'
-import { ReactElement } from 'react'
+import { isValidElement, ReactElement } from 'react'
 import { validateElementCreator, unfoldRender, renderElementChain } from './utils'
-import reactChainProvider from './ReactChainProvider'
-import reactChainInitMiddleware from './ReactChainInit'
 import { Middleware, Session, CreateElement } from './types'
 export { Middleware, Session, CreateElement }
 
 export class ReactChain {
-  middlewareChain: Array<Middleware> = [reactChainInitMiddleware]
+  middlewareChain: Array<Middleware> = []
 
-  chain(middleware?: Middleware) {
+  use(middleware?: ReactElement<any> | Middleware) {
+    if (middleware && isValidElement(middleware)) {
+      middleware = ((element) => () => () => element)(middleware)
+    }
     if (typeof middleware !== 'function') {
       throw new Error('A react-chain middleware should be a function')
     }
@@ -17,6 +18,11 @@ export class ReactChain {
     this.middlewareChain.push(middleware)
 
     return this
+  }
+
+  // Deprecated
+  chain(middleware?: ReactElement<any> | Middleware) {
+    return this.use(middleware)
   }
 
   createSession = createSession
@@ -37,27 +43,19 @@ export class ReactChain {
       session.__firstRender = false
     }
 
-    return await reactChainProvider(renderElementChain(session.__elementChain), session)
+    return await renderElementChain(session.__elementChain)
   }
 
-  async renderBrowser(session: Session, onRender: (element: ReactElement<any>) => void) {
+  async renderBrowser(session: Session, onRender: (element: ReactElement<any>) => any) {
     const element = await this.getElement(session)
-    unfoldRender(session, 'browser', () => {
-      onRender(element)
-    })
+    return unfoldRender(session, 'browser', () => onRender(element))
   }
 
-  async renderServer(session: Session, onRender: (element: ReactElement<any>) => string) {
+  async renderServer(session: Session, onRender: (element: ReactElement<any>) => any) {
     const element = await this.getElement(session)
-    let body = ''
-    unfoldRender(session, 'server', () => {
-      body = onRender(element)
-    })
-    return body
+    return unfoldRender(session, 'server', () => onRender(element))
   }
 }
-
-export { default as startClient } from './startClient'
 
 export default function createReactChain() {
   return new ReactChain()

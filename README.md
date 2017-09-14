@@ -64,11 +64,6 @@ type WrapRender =
     void
 ```
 
-### Official Middleware
-
-- [react-chain-helmet](packages/react-chain-helmet): Adds rewind logic to server rendering using [React Helmet](https://github.com/nfl/react-helmet).
-- [react-chain-history](packages/react-chain-history): A middlware for [history](https://github.com/reacttraining/history).
-
 ## Render
 
 ### Browser

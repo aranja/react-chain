@@ -3,4 +3,4 @@ logs
 npm-debug.log*
 coverage
 node_modules
-packages/*/lib
+lib

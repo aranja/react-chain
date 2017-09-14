@@ -1,4 +1,0 @@
-packages/*/src
-packages/*/tsconfig.json
-packages/*/lib/__mocks__
-packages/*/lib/__tests__

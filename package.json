@@ -21,7 +21,7 @@
     "codecov": "^2.1.0",
     "enzyme": "^2.7.1",
     "jest": "^19.0.2",
-    "lerna": "2.0.0-rc.1",
+    "lerna": "2.7.0",
     "react-addons-test-utils": "^15.4.2",
     "react-test-renderer": "^15.4.2",
     "ts-jest": "^19.0.3",

@@ -20,7 +20,7 @@
     "babel-preset-react": "^6.23.0",
     "codecov": "^2.1.0",
     "enzyme": "^2.7.1",
-    "jest": "^19.0.2",
+    "jest": "^22.1.0",
     "lerna": "2.0.0-rc.1",
     "react-addons-test-utils": "^15.4.2",
     "react-test-renderer": "^15.4.2",

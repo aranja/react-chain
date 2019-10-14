@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "@types/enzyme": "^2.7.6",
-    "@types/jest": "^19.2.2",
+    "@types/jest": "^24.0.19",
     "@types/react": "^15.0.0",
     "@types/react-dom": "^0.14.23",
     "babel-jest": "^19.0.0",
